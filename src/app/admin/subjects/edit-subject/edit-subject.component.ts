@@ -1,8 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
+import {SubjectService} from '../services/subject.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {SubjectService} from '../services/subject.service';
 
 interface Subject {
   subject_id: number;

@@ -3,7 +3,8 @@ import { StudentsService } from './students.service';
 import { StudentGet, IResponse } from './students-interface';
 import { Student } from './students-interface';
 import { group } from '@angular/animations';
-import { StudentRegistrationFormComponent } from './student-registration-form/student-registration-form.component'
+import { StudentRegistrationFormComponent } from './student-registration-form/student-registration-form.component';
+import { StudentEditFormComponent } from './student-edit-form/student-edit-form.component'
 import { MatDialog } from '@angular/material';
 
 @Component({
@@ -23,7 +24,6 @@ export class StudentsComponent implements OnInit {
     //При кожному ререндері компоненту будуть братись нові дані з сервера
     this.fillOutStudentsTable();
   }
-
   // Відкриває діалогове вікно
   showRegForm(): void {
     let dialogRef = this.dialog.open(StudentRegistrationFormComponent);
@@ -32,8 +32,11 @@ export class StudentsComponent implements OnInit {
     });
   }
   //Редагування студента
-  showEditForm(): void {
-    
+  showEditForm(user: Student): void {
+    let dialogRef = this.dialog.open(StudentEditFormComponent, {data: {student: user}});
+    dialogRef.afterClosed().subscribe(() => {
+      this.fillOutStudentsTable();
+    });
   }
   // метод який записує в масив "students" дані про кожного студента
   fillOutStudentsTable(): void {
@@ -60,6 +63,7 @@ export class StudentsComponent implements OnInit {
             student_surname: `${data[i].student_surname} `,
             gradebook_id: data[i].gradebook_id,
             user_id: data[i].user_id,
+            group_id: data[i].group_id,
             group: ''
           });
           // Додавання групи кожному студенту
@@ -74,11 +78,10 @@ export class StudentsComponent implements OnInit {
   }
   //Видалення студента
   handleDelete(index): void {
-      console.log(index);
-//    this.service.deleteStudent(index).subscribe((data: IResponse) => {
-//      if(data.response === 'ok') {
-//        this.fillOutStudentsTable();
-//      }
-//    });
+    this.service.deleteStudent(index).subscribe((data: IResponse) => {
+      if(data.response === 'ok') {
+        this.fillOutStudentsTable();
+      }
+    });
   }
 }

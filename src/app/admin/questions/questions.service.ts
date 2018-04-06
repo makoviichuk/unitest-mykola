@@ -10,13 +10,13 @@ import { IResponse } from './questions-interface';
 @Injectable()
 export class QuestionsService {
 
-  
+
   private getQuestionURL: string = 'http://vps9615.hyperhost.name:443/api/question/getRecords';
   private getAllQuestionsURL: string = 'http://vps9615.hyperhost.name:443/api/question/getRecords/0';
   private addQuestionsURL: string = 'http://vps9615.hyperhost.name:443/api/question/insertData';
   private getEntityValueURL: string = 'http://vps9615.hyperhost.name:443/api/EntityManager/getEntityValues';
   private editQuestionURL = 'http://vps9615.hyperhost.name:443/api/question/update';
-  
+
 constructor(private http: HttpClient) { }
 
 
@@ -31,16 +31,16 @@ getQuestionById(id: number) {
 
 
 //   interface QuestionsAdd {
-//    question_id: string; 
-//    test_id: string; 
-//    question_text: string; 
-//    level: string; 
-//    type: string; 
+//    question_id: string;
+//    test_id: string;
+//    question_text: string;
+//    level: string;
+//    type: string;
 //    attachment: string;}
-    
+
 addQuestion(body): void {
     this.http.post<QuestionsAdd>(this.addQuestionsURL, body).subscribe();
-  } 
+  }
 
 //  addQuestion(title: string, description: string) {
 //    const body = {subject_name: title, subject_description: description};
@@ -62,7 +62,7 @@ addQuestion(body): void {
 
   deleteQuestion(id): Observable<IResponse> {
      alert('id видаленого завданя: '+ id)
-    
+
     return this.http.delete<IResponse>(`http://vps9615.hyperhost.name:443/api/question/del/${id}`);
 //    return this.http.delete<IResponse>('http://vps9615.hyperhost.name:443/api/question/del/'+id);
 

@@ -28,13 +28,13 @@ import { IResponse } from './questions-interface';
 
 
 export class QuestionsComponent implements OnInit {
-    
-     title: string = 'Завдання для тесту: ';
+
+     title = 'Завдання для тесту: ';
 
   questions: Questions[] = [];
   question: Questions; // = {};
 
-  
+
 //  subjects: Subjects;
   form: FormGroup;
 
@@ -45,9 +45,9 @@ export class QuestionsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
- //При кожному ререндері компоненту будуть братись нові дані з сервера
-    this.fillOutQuestionsTable();      
-      
+ // При кожному ререндері компоненту будуть братись нові дані з сервера
+    this.fillOutQuestionsTable();
+
   }
 
 
@@ -69,9 +69,7 @@ openModalEdit(id) {
 
 
 showRegForm() {
-    
-    
-    
+
   }
 
 
@@ -82,18 +80,20 @@ showRegForm() {
                           for (let i = 0; i < data.length; i++) {
                                                                     testArr.push(data[i].test_id);
                                                                 }
-                  let body = JSON.stringify({entity: "Test", ids: testArr});
-                    
-                    
+                  let body = JSON.stringify({entity: 'Test', ids: testArr});
+
+
                   this.service.getEntityValue(body).subscribe(response => {
                     // Фільтр для сутностей "Test" які приходять з сервера
                     testArr = response.map(val => {
                       return {
                         test_id: val.test_id,
                         test_name: val.test_name
-                      }
+                      };
                     });
-                      
+
+                    this.questions = [];
+
                     // Додавання завдань в масив "questions" {question_id, test_id, question_text, level, type, attachment}
                     for (let i = 0; i < data.length; i++) {
                       this.questions.push({
@@ -105,42 +105,30 @@ showRegForm() {
                         attachment: data[i].attachment,
 //                        test: ''
                       });
-                        
+
                       // Додавання test_name для кожного завдання
 //                      for (let j = 0; j < testArr.length; j++) {
 //                        if (data[i].test_id === testArr[j].test_id) {
 //                          this.questions[i].test = testArr[j].test_name;
-//                        }          
+//                        }
 //                       }
-                        
+
                     }
-                      
+
                   });
                 });
               }
 
-  //Видалення завдання
+  // Видалення завдання
   handleDelete(index): void {
 //     console.log(index);
     this.service.deleteQuestion(index).subscribe((data: IResponse) => {
-      if(data.response === 'ok') {
-      //При кожному видаленні будуть оновлюватися дані з сервера
-//        this.questions=[];
-        this.fillOutQuestionsTable(); // оновює але не заміняє список завданнь 
+      if (data.response === 'ok') {
+      // При кожному видаленні будуть оновлюватися дані з сервера
+
+        this.fillOutQuestionsTable(); // оновює але не заміняє список завданнь
       }
     });
   }
-  
-  
-  
 
 }
-
-
-
-
-
-
-
-
-

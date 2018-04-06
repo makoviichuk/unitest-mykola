@@ -9,6 +9,7 @@ import {AuthService} from './shared/auth/auth.service';
 import {StudentsService} from './admin/students/students.service';
 import { SubjectService } from './admin/subjects/services/subject.service';
 import { QuestionsService } from './admin/questions/questions.service';
+import {AuthGuard} from './auth-guard.service';
 
 import {
     MatAutocompleteModule,
@@ -42,7 +43,7 @@ import {
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
-    MatTooltipModule
+    MatTooltipModule,
 } from '@angular/material';
 
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
@@ -59,15 +60,18 @@ import { SubjectsComponent } from './admin/subjects/subjects.component';
 import { SpecialitiesComponent } from './admin/specialities/specialities.component';
 import { AdministratorsComponent } from './admin/administrators/administrators.component';
 import { StudentRegistrationFormComponent } from './admin/students/student-registration-form/student-registration-form.component';
+import { StudentEditFormComponent } from './admin/students/student-edit-form/student-edit-form.component';
 import { GroupsComponent } from './admin/groups/groups.component';
 import { TimetableComponent } from './admin/timetable/timetable.component';
-//import { StudentEditFormComponent } from './admin/students/student-edit-form/student-edit-form.component';
+import { TimeTableModal } from "./admin/timetable/timetable-modal/timetable-modal.component";
 import { EditSubjectComponent } from './admin/subjects/edit-subject/edit-subject.component';
 import { AddSubjectComponent } from './admin/subjects/add-subject/add-subject.component';
 
 import { QuestionsComponent } from './admin/questions/questions.component';
 import { EditQuestionComponent } from './admin/questions/edit-question/edit-question.component';
 import { AddQuestionComponent } from './admin/questions/add-question/add-question.component';
+
+
 
 
 @NgModule({
@@ -114,28 +118,30 @@ import { AddQuestionComponent } from './admin/questions/add-question/add-questio
         MatTooltipModule
     ],
     entryComponents: [
-        AppComponent,
-        StudentRegistrationFormComponent,
-        AddSubjectComponent, EditSubjectComponent,
+        AppComponent, 
+        AddSubjectComponent, EditSubjectComponent, 
+        StudentRegistrationFormComponent, StudentEditFormComponent,
+        TimeTableModal,
         AddQuestionComponent, EditQuestionComponent
     ],
     declarations: [
         AppComponent,
         AuthComponent,
         AdminComponent,
+        StudentComponent,
         StatisticComponent,
         FacultiesComponent,
         SubjectsComponent,
-        AddSubjectComponent,
         EditSubjectComponent,
+        AddSubjectComponent,
         SpecialitiesComponent,
         AdministratorsComponent,
-        GroupsComponent,
-        TimetableComponent,
-        StudentComponent,
         StudentsComponent,
+        GroupsComponent,
+        TimetableComponent, 
+        TimeTableModal,
         StudentRegistrationFormComponent,
-//      StudentEditFormComponent,
+        StudentEditFormComponent,
         
         QuestionsComponent, 
         AddQuestionComponent, 
@@ -147,7 +153,8 @@ import { AddQuestionComponent } from './admin/questions/add-question/add-questio
         AuthService,
         StudentsService,
         SubjectService,
-        QuestionsService
+        QuestionsService,
+        AuthGuard,
     ]
 })
 

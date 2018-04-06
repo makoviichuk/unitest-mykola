@@ -56,7 +56,6 @@ const routes: Routes = [
             path: 'timetable',
             component: TimetableComponent
           },
-            
           {
             path: 'questions',
             component: QuestionsComponent
@@ -72,6 +71,7 @@ const routes: Routes = [
     imports: [ RouterModule.forRoot(routes) ],
     exports: [ RouterModule ],
     providers: [AuthGuard]
+
 })
 
 export class AppRoutingModule { }
