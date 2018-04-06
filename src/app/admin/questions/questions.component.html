@@ -1,0 +1,64 @@
+<section>
+  <!-- Список завдань -->
+  <div class="container-fluid">
+    <header> 
+      <h1 class="h3 display">{{ title }}</h1>
+<!--      <h1 class="h3 display">{{ title }}{{subject.subject_id}}</h1>-->
+
+      <button mat-raised-button class="btn btn-primary" (click)="openModalAdd()">Додати завдання</button>
+
+<!--
+              <button class="btn btn-success" type="submit" formaction="http://vps9615.hyperhost.name:443/api/testDetail/getTestDetailsByTest/1">
+                  Додати завдання
+              </button>
+-->
+              
+<!--              
+                 <br> 
+                  <form action="http://vps9615.hyperhost.name:443/api/testDetail/getTestDetailsByTest/1" method="get">
+                      <input type="submit" value="Submit" formtarget="_blank"><br>
+                  </form>
+-->
+    </header> 
+    
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>№</th>
+                    <th>Завдання</th>
+                    <th>question_id</th>
+                    <th>Рівень</th>
+                    <th>Тип</th>
+                    <th>Вкладення</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let question of questions; let i = index">
+                    <th>{{i+1}}</th>
+                    <td><span>{{question.question_text}} </span></td>
+                    <td><span>{{question.question_id}} </span></td>
+                    <th>{{question.level}}</th>
+                    <th>{{question.type}}</th>
+                    <th>{{question.attachment}}</th>
+                    <td><i class="fa fa-cog" (click)="openModalEdit(question.question_id)"></i></td>
+                    <td><i class="fa fa-close" (click)="handleDelete(question.question_id)"></i></td> 
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <!-- Компонент форми реєстрації -->
+<!--  <app-student-registration-form></app-student-registration-form>-->
+</section>
+
