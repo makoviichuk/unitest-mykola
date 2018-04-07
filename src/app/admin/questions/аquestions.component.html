@@ -1,14 +1,16 @@
 <section>
-  <!-- Таблиця з студентами -->
+  <!-- Список завдань -->
   <div class="container-fluid">
     <header> 
+      <h1 class="h3 display">{{title}}{{question.test_id}}test_id</h1>
+<!--      <h1 class="h3 display">{{ title }}{{subject.subject_id}}</h1>-->
       <h1 class="h3 display">{{ title }}</h1>
-            <h1 class="h3 display">{{title}}<span>{{question.test_id}} </span></h1>
- <button mat-raised-button class="btn btn-primary" (click)="openModalAdd()">Додати завдання</button>
+
+      <button mat-raised-button class="btn btn-primary" (click)="openModalAdd()">Додати завдання</button>
+
 
     </header> 
- <span *ngFor="let question of questions; let i = index">{{question.question_id}}</span>
-  
+    
     <div class="row">
       <div class="col-lg-12">
         <div class="card">

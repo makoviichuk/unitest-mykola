@@ -29,10 +29,14 @@ import { IResponse } from './questions-interface';
 
 export class QuestionsComponent implements OnInit {
 
-     title = 'Завдання для тесту: ';
 
-  questions: Questions[] = [];
-  question: Questions; // = {};
+    questions: Questions[] = [];
+    question: Questions; // = {};
+
+    title: string  = 'Завдання для тесту: ';
+
+
+
 
 
 //  subjects: Subjects;
@@ -84,17 +88,18 @@ showRegForm() {
 
 
                   this.service.getEntityValue(body).subscribe(response => {
-                    // Фільтр для сутностей "Test" які приходять з сервера
-                    testArr = response.map(val => {
-                      return {
-                        test_id: val.test_id,
-                        test_name: val.test_name
-                      };
-                    });
+                            // Фільтр для сутностей "Test" які приходять з сервера
+                            testArr = response.map(val => {
+                              return {
+                                test_id: val.test_id,
+                                test_name: val.test_name
+                              };
+                            });
 
-                    this.questions = [];
 
-                    // Додавання завдань в масив "questions" {question_id, test_id, question_text, level, type, attachment}
+                     // Додавання завдань в масив "questions" {question_id, test_id, question_text, level, type, attachment}
+                   this.questions = [];
+
                     for (let i = 0; i < data.length; i++) {
                       this.questions.push({
                         question_id: data[i].question_id,
