@@ -21,7 +21,7 @@ export class StudentsComponent implements OnInit {
   constructor(private service: StudentsService, private dialog: MatDialog) { }
 
   ngOnInit() {
-    //При кожному ререндері компоненту будуть братись нові дані з сервера
+    // При кожному ререндері компоненту будуть братись нові дані з сервера
     this.fillOutStudentsTable();
   }
   // Відкриває діалогове вікно

@@ -1,13 +1,31 @@
 <section>
-  <!-- Таблиця з студентами -->
   <div class="container-fluid">
     <header> 
-      <h1 class="h3 display">{{ title }}</h1>
-            <h1 class="h3 display">{{title}}<span>{{question.test_id}} </span></h1>
- <button mat-raised-button class="btn btn-primary" (click)="openModalAdd()">Додати завдання</button>
+            
+            <h1 class="h3 display ">{{ title_component }} 
+                <span>
+                  <select 
+                    class="col-12" 
+                    id="testSelect" 
+                    name="test" 
+                    (change)="setSelectedTestName($event.target.value)"
+                    (change)="fillOutQuestionsTable($event.target.value)"
+                    >
+                    <option disabled>Виберіть тест</option>
+                    <option *ngFor="let t of testNameSet" [value]="t" >
+                      {{t}}
+
+                    </option>
+                    
+                  </select>
+                </span>
+                
+            </h1>
+
+            <button mat-raised-button class="btn btn-primary" 
+            (click)="openModalAdd(selectedTestId, setSelectedTestName($event.target.value))">Додати завдання</button>
 
     </header> 
- <span *ngFor="let question of questions; let i = index">{{question.question_id}}</span>
   
     <div class="row">
       <div class="col-lg-12">
@@ -19,21 +37,23 @@
                   <tr>
                     <th>№</th>
                     <th>Завдання</th>
-                    <th>test_id</th>
+                    <th>Тест</th>
+                    <th>question_id</th>
                     <th>Рівень</th>
                     <th>Тип</th>
                     <th>Вкладення</th>
-                    <th></th>
+                    <th colspan="2">Керування</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let question of questions; let i = index">
                     <th>{{i+1}}</th>
-                    <td><span>{{question.question_text}} </span></td>
-                    <td><span>{{question.test_id}} </span></td>
-                    <th>{{question.level}}</th>
-                    <th>{{question.type}}</th>
-                    <th>{{question.attachment}}</th>
+                    <td>{{question.question_text}} </td>
+                    <td>{{question.test}} </td>
+                    <td>{{question.question_id}} </td>
+                    <td>{{question.level}}</td>
+                    <td>{{question.type}}</td>
+                    <td>{{question.attachment}}</td>
                     <td><i class="fa fa-cog" (click)="openModalEdit(question.question_id)"></i></td>
                     <td><i class="fa fa-close" (click)="handleDelete(question.question_id)"></i></td> 
                   </tr>
@@ -46,7 +66,5 @@
     </div>
     
   </div>
-  <!-- Компонент форми реєстрації -->
-<!--  <app-student-registration-form></app-student-registration-form>-->
 </section>
 

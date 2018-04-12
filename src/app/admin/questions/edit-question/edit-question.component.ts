@@ -4,7 +4,7 @@ import {ActivatedRoute} from '@angular/router';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import { QuestionsService } from '../questions.service';
 
-import { Questions } from '../questions-interface';
+import { IQuestions } from '../questions-interface';
 
 
 @Component({
@@ -17,7 +17,7 @@ import { Questions } from '../questions-interface';
 export class EditQuestionComponent implements OnInit {
 
 //  subject: Subject;
-  question: Questions;
+  question: IQuestions;
   form: FormGroup;
 
   constructor(
@@ -39,7 +39,7 @@ export class EditQuestionComponent implements OnInit {
   getQuestion() {
     const id = this.data.question_id;
     this.questionService.getQuestionById(id)
-      .subscribe((data: Questions) => {
+      .subscribe((data: IQuestions) => {
         this.question = data;
       });
   }
@@ -48,7 +48,7 @@ export class EditQuestionComponent implements OnInit {
     const id = this.data.question_id;
     const formData = this.form.value;
     this.questionService.editQuestion(id, formData.title, formData.description)
-      .subscribe((data: Questions) => {
+      .subscribe((data: IQuestions) => {
         if (data) {
           this.matDialogRef.close();
         }

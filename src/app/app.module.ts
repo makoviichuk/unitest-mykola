@@ -63,7 +63,7 @@ import { StudentRegistrationFormComponent } from './admin/students/student-regis
 import { StudentEditFormComponent } from './admin/students/student-edit-form/student-edit-form.component';
 import { GroupsComponent } from './admin/groups/groups.component';
 import { TimetableComponent } from './admin/timetable/timetable.component';
-import { TimeTableModal } from "./admin/timetable/timetable-modal/timetable-modal.component";
+import { TimeTableModal } from './admin/timetable/timetable-modal/timetable-modal.component';
 import { EditSubjectComponent } from './admin/subjects/edit-subject/edit-subject.component';
 import { AddSubjectComponent } from './admin/subjects/add-subject/add-subject.component';
 
@@ -118,8 +118,8 @@ import { AddQuestionComponent } from './admin/questions/add-question/add-questio
         MatTooltipModule
     ],
     entryComponents: [
-        AppComponent, 
-        AddSubjectComponent, EditSubjectComponent, 
+        AppComponent,
+        AddSubjectComponent, EditSubjectComponent,
         StudentRegistrationFormComponent, StudentEditFormComponent,
         TimeTableModal,
         AddQuestionComponent, EditQuestionComponent
@@ -138,15 +138,15 @@ import { AddQuestionComponent } from './admin/questions/add-question/add-questio
         AdministratorsComponent,
         StudentsComponent,
         GroupsComponent,
-        TimetableComponent, 
+        TimetableComponent,
         TimeTableModal,
         StudentRegistrationFormComponent,
         StudentEditFormComponent,
-        
-        QuestionsComponent, 
-        AddQuestionComponent, 
+
+        QuestionsComponent,
+        AddQuestionComponent,
         EditQuestionComponent
-        
+
     ],
     bootstrap: [AppComponent],
     providers: [

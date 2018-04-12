@@ -3,18 +3,15 @@ import { QuestionsService } from './questions.service';
 import {AddQuestionComponent} from './add-question/add-question.component';
 import {EditQuestionComponent} from './edit-question/edit-question.component';
 
-
-import { QuestionsGet } from './questions-interface';
-import { QuestionsAdd } from './questions-interface';
-import { Questions } from './questions-interface';
+import { IQuestionsGet } from './questions-interface';
+import { IQuestionAdd } from './questions-interface';
+import { IQuestions } from './questions-interface';
 import { group } from '@angular/animations';
 
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 
 import { IResponse } from './questions-interface';
-
-
 
 @Component({
   selector: 'app-questions',
@@ -23,43 +20,39 @@ import { IResponse } from './questions-interface';
     providers: [ QuestionsService ]
 })
 
-
-
-
-
 export class QuestionsComponent implements OnInit {
 
 
-    questions: Questions[] = [];
-    question: Questions; // = {};
+ static selectedTestId: string;
+      selectedTestName: string;
 
-    title: string  = 'Завдання для тесту: ';
+      questions: IQuestions[] = [];
+      question: IQuestions;
+      testNameSet = new Set();
+
+      title_component = 'Завдання для тесту: ';
 
 
-
-
-
-//  subjects: Subjects;
   form: FormGroup;
-
-
   constructor(
     private service: QuestionsService,
-    public dialog: MatDialog
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
- // При кожному ререндері компоненту будуть братись нові дані з сервера
-    this.fillOutQuestionsTable();
 
+    this.fillOutQuestionsTable(event);
   }
 
 
-openModalAdd() {
+openModalAdd(id, name) {
+  console.log('id = ', id, 'name = ', name);
+
+
     this.dialog.open(AddQuestionComponent, {
       height: '600px',
-      width: '600px',
-      data: {name: 'test'}
+      width: '800px',
+      data: {selId: id, selName: name}
     });
   }
 
@@ -67,56 +60,63 @@ openModalEdit(id) {
     this.dialog.open(EditQuestionComponent, {
       height: '600px',
       width: '800px',
-      data: {subject_id: id, name: 'test'}
+      data: {test_id: id, name: 'test'}
     });
   }
 
 
-showRegForm() {
-
+  setSelectedTestName(selectedTestName): string {
+    console.log('SETselectedTestName = ', selectedTestName);
+    return selectedTestName;
   }
 
 
-        // метод який записує в масив "questions" дані про кожне завдання
-              fillOutQuestionsTable() {
-                this.service.getAllQuestions().subscribe(data => {
-                          let testArr = [];
-                          for (let i = 0; i < data.length; i++) {
-                                                                    testArr.push(data[i].test_id);
-                                                                }
-                  let body = JSON.stringify({entity: 'Test', ids: testArr});
+              fillOutQuestionsTable(selectedTestName): void {
+                console.log('selectedTestName = ', selectedTestName);
 
+                this.service.getAllQuestions().subscribe(data => {
+                          const testArr = [];
+                          let testIdNameArr = [];
+                          for (let i = 0; i < data.length; i++) {
+                                 testArr.push(data[i].test_id);
+                          }
+
+                  const body = JSON.stringify({entity: 'Test', ids: testArr});
 
                   this.service.getEntityValue(body).subscribe(response => {
-                            // Фільтр для сутностей "Test" які приходять з сервера
-                            testArr = response.map(val => {
+                            testIdNameArr = response.map(val => {
                               return {
                                 test_id: val.test_id,
                                 test_name: val.test_name
                               };
                             });
 
+                           for (let j = 0; j < testIdNameArr.length; j++) {
+                              this.testNameSet.add(testIdNameArr[j].test_name);
+                            }
 
-                     // Додавання завдань в масив "questions" {question_id, test_id, question_text, level, type, attachment}
+
                    this.questions = [];
 
                     for (let i = 0; i < data.length; i++) {
-                      this.questions.push({
-                        question_id: data[i].question_id,
-                        test_id: data[i].test_id,
-                        question_text: data[i].question_text,
-                        level: data[i].level,
-                        type: data[i].type,
-                        attachment: data[i].attachment,
-//                        test: ''
-                      });
 
-                      // Додавання test_name для кожного завдання
-//                      for (let j = 0; j < testArr.length; j++) {
-//                        if (data[i].test_id === testArr[j].test_id) {
-//                          this.questions[i].test = testArr[j].test_name;
-//                        }
-//                       }
+                     for (let j = 0; j < testIdNameArr.length; j++) {
+
+                          if ( testIdNameArr[j].test_name === selectedTestName  &&
+                            testIdNameArr[j].test_id === data[i].test_id) {
+                            this.questions.push({
+                              question_id: data[i].question_id,
+                              test_id: data[i].test_id,
+                              question_text: data[i].question_text,
+                              level: data[i].level,
+                              type: data[i].type,
+                              attachment: data[i].attachment,
+                              test: testIdNameArr[j].test_name
+                            });
+                            QuestionsComponent.selectedTestId = testIdNameArr[j].test_id;
+                           console.log('selectedTestId = ', QuestionsComponent.selectedTestId);
+                         }
+                      }
 
                     }
 
@@ -124,14 +124,13 @@ showRegForm() {
                 });
               }
 
-  // Видалення завдання
-  handleDelete(index): void {
-//     console.log(index);
+
+
+    handleDelete(index): void {
     this.service.deleteQuestion(index).subscribe((data: IResponse) => {
       if (data.response === 'ok') {
-      // При кожному видаленні будуть оновлюватися дані з сервера
 
-        this.fillOutQuestionsTable(); // оновює але не заміняє список завданнь
+        this.fillOutQuestionsTable(event);
       }
     });
   }

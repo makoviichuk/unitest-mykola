@@ -1,6 +1,7 @@
-export interface Questions {
+export interface IQuestions {
     question_id: string;
     test_id: string;
+    test: string;
     question_text: string;
     level: string;
     type: string;
@@ -9,7 +10,7 @@ export interface Questions {
 }
 
 
-export interface QuestionsGet {
+export interface IQuestionsGet {
     question_id: string;
     test_id: string;
     question_text: string;
@@ -18,16 +19,16 @@ export interface QuestionsGet {
     attachment: string;
 }
 
-export interface QuestionsAdd {
-    question_id: string;
+export interface IQuestionAdd {
     test_id: string;
     question_text: string;
     level: string;
-    type: string;
+    type_name: string;
+    type_index: string;
     attachment: string;
 }
 
-export interface TestNameByID {
+export interface ITestNameByID { // адаптувати відповідно до сутності Question
     test_id: string;
     test_name: string;
     subject_id: string;
