@@ -1,14 +1,10 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {SubjectService} from '../services/subject.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
-interface Subject {
-  subject_id: number;
-  subject_name: string;
-  subject_description: string;
-}
+import {SubjectService} from '../services/subject.service';
+import {Subject} from '../subject';
 
 @Component({
   selector: 'app-edit-subject',
@@ -17,8 +13,10 @@ interface Subject {
 })
 export class EditSubjectComponent implements OnInit {
 
-  subject: Subject;
+  subject: Subject[];
   form: FormGroup;
+  error;
+  isLoaded = false; // for checking status download data
 
   constructor(
     private route: ActivatedRoute,
@@ -30,16 +28,25 @@ export class EditSubjectComponent implements OnInit {
     this.getSubject();
 
     this.form = new FormGroup({
-      'title': new FormControl(null, [Validators.required]),
-      'description': new FormControl(null, [Validators.required])
+      'title': new FormControl(null, [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50)
+      ]),
+      'description': new FormControl(null, [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(100)
+      ])
     });
   }
 
-  getSubject() {
+  getSubject(): void {
     const id = this.data.subject_id;
     this.subjectService.getSubjectById(id)
-      .subscribe((data: Subject) => {
-        this.subject = data;
+      .subscribe((subject: Subject[]) => {
+        this.subject = subject;
+        this.isLoaded = true;
       });
   }
 
@@ -47,15 +54,16 @@ export class EditSubjectComponent implements OnInit {
     const id = this.data.subject_id;
     const formData = this.form.value;
     this.subjectService.editSubject(id, formData.title, formData.description)
-      .subscribe((data: Subject) => {
-        if (data) {
-          this.matDialogRef.close();
+      .subscribe((subject: Subject[]) => {
+        if (subject) {
+          return this.matDialogRef.close();
         }
-      });
+      },
+        error => this.error = error
+      );
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.matDialogRef.close();
   }
-
 }

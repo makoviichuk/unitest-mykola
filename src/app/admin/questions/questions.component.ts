@@ -42,11 +42,13 @@ export class QuestionsComponent implements OnInit {
   ngOnInit() {
 
     this.fillOutQuestionsTable(event);
+    this.createTestsNamesSet();
   }
 
 
-openModalAdd(id, name) {
+openModalAdd(id, name, selName) {
   console.log('id = ', id, 'name = ', name);
+  console.log('selName = ', selName);
 
 
     this.dialog.open(AddQuestionComponent, {
@@ -64,6 +66,26 @@ openModalEdit(id) {
     });
   }
 
+createTestsNamesSet() {
+  console.log('this.service.getAllTests() = ',
+   this.service.getAllTests().subscribe());
+
+    this.service.getAllTests().subscribe(data => {
+      const testArr = [];
+      let testIdNameArr = [];
+
+      for (let i = 0; i < data.length; i++) {
+             testArr.push(data[i].test_id);
+      }
+
+      testIdNameArr = data.map(val => {
+        return {
+          test_id: val.test_id,
+          test_name: val.test_name
+        };
+      });
+   });
+}
 
   setSelectedTestName(selectedTestName): string {
     console.log('SETselectedTestName = ', selectedTestName);
@@ -119,6 +141,7 @@ openModalEdit(id) {
                       }
 
                     }
+                    console.log('testIdNameArr = ', testIdNameArr);
 
                   });
                 });

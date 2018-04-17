@@ -1,6 +1,7 @@
 <div class="container-fluid">
-  <div class="raw d-flex justify-content-center align-item-center">
-    <h1>Додати студента</h1>
+  <div class="header raw d-flex justify-content-between">
+      <h1>Додати студента</h1>
+      <button class="btn" type="button" (click)="handleClose()">Назад</button>
   </div>
   <div class="row">
     <div class="col">
@@ -11,6 +12,7 @@
         <div class="form-row">
           <div class="form-group col-6">
             <!-- Прізвище -->
+            <label>Прізвище</label>
             <input 
               class="form-control col-12" 
               type="text" 
@@ -18,14 +20,15 @@
               name="surname" placeholder="Прізвище..." 
               [(ngModel)]="student.student_surname">
             <div 
-              *ngIf="form.get('surname').invalid && form.get('surname').dirty && form.get('surname').touched" 
-              class="alert alert-danger col-12">
+              *ngIf="form.get('surname').invalid && (form.get('surname').dirty || form.get('surname').touched)" 
+              class="error col-12">
               <div *ngIf="form.get('surname').errors.minlength">Мінімум 2 символи</div>
               <div *ngIf="form.get('surname').errors.required">Це поле є обов'язковим</div>
             </div>
           </div>
           <!-- Ім'я -->
           <div class="form-group col-6">
+              <label>Ім'я</label>
             <input 
               class="form-control col-12" 
               type="text" 
@@ -34,8 +37,8 @@
               placeholder="Ім'я..." 
               [(ngModel)]="student.student_name">
             <div 
-              *ngIf="form.get('firstname').invalid && form.get('firstname').dirty && form.get('firstname').touched" 
-              class="alert alert-danger col-12">
+              *ngIf="form.get('firstname').invalid && (form.get('firstname').dirty || form.get('firstname').touched)" 
+              class="error col-12">
               <div *ngIf="form.get('firstname').errors.minlength">Мінімум 2 символи</div>
               <div *ngIf="form.get('firstname').errors.required">Це поле є обов'язковим</div>
             </div>
@@ -44,6 +47,7 @@
         <div class="form-row">
           <div class="form-group col-12">
             <!-- По-батькові -->
+            <label>По-батькові</label>
             <input 
               class="form-control col-12" 
               type="text" 
@@ -52,8 +56,8 @@
               placeholder="По-батькові..." 
               [(ngModel)]="student.student_fname">
             <div 
-              *ngIf="form.get('fname').invalid && form.get('fname').dirty && form.get('fname').touched" 
-              class="alert alert-danger col-12">
+              *ngIf="form.get('fname').invalid && (form.get('fname').dirty || form.get('fname').touched)" 
+              class="error col-12">
               <div *ngIf="form.get('fname').errors.minlength">Мінімум 2 символи</div>
               <div *ngIf="form.get('fname').errors.required">Це поле є обов'язковим</div>
             </div>
@@ -63,13 +67,14 @@
             <div class="form-group col-6">
               <!-- Факультет -->
               <label>Факультет</label>
-              <select
+              <select 
                 class="form-control col-12" 
                 id="facultySelect" 
                 name="faculty" 
-                aria-placeholder="Факультет..." 
+                formControlName="faculty"
                 #facultyField 
                 (change)="getGroups(facultyField)">
+                <option [selected]="true">Виберіть факультет</option>
                 <option *ngFor="let faculty of faculties">{{faculty.faculty_name}}</option>
               </select>
             </div>
@@ -80,8 +85,9 @@
                 class="form-control col-12" 
                 id="groupsSelect" 
                 name="group" 
-                aria-placeholder="Група..." 
+                formControlName="group"
                 #groupField (change)="handleSetGroup(groupField)">
+                <option [selected]="true">Виберіть групу</option>
                 <option *ngFor="let group of groups">{{group.group_name}}</option>
               </select>
             </div>
@@ -89,6 +95,7 @@
         <div class="form-row">
           <div class="form-group col-12">
             <!-- Номер заліковки -->
+            <label>Номер заліковки</label>
             <input 
               class="form-control col-12" 
               type="text" 
@@ -97,8 +104,8 @@
               placeholder="№ заліковки..." 
               [(ngModel)]="student.gradebook_id">
             <div 
-              *ngIf="form.get('gradebook').invalid && form.get('gradebook').dirty && form.get('gradebook').touched" 
-              class="alert alert-danger col-12">
+              *ngIf="form.get('gradebook').invalid && (form.get('gradebook').dirty || form.get('gradebook').touched)" 
+              class="error col-12">
               <div *ngIf="form.get('gradebook').errors.minlength">Мінімум 3 символи</div>
               <div *ngIf="form.get('gradebook').errors.required">Це поле є обов'язковим</div>
             </div>
@@ -107,6 +114,7 @@
         <div class="form-row">
           <div class="form-group col-6">
             <!-- Логін -->
+            <label>Логін</label>
             <input 
               class="form-control col-12" 
               type="text" 
@@ -115,25 +123,28 @@
               placeholder="Логін..." 
               [(ngModel)]="student.username">
               <div 
-                *ngIf="form.get('login').invalid && form.get('login').dirty && form.get('login').touched" 
-                class="alert alert-danger col-12">
+                *ngIf="form.get('login').invalid && (form.get('login').dirty || form.get('login').touched)" 
+                class="error col-12">
                 <div *ngIf="form.get('login').errors.minlength">Мінімум 2 символи</div>
                 <div *ngIf="form.get('login').errors.required">Це поле є обов'язковим</div>
               </div>
           </div>
-          <div class="form-group col-6">
+          <div id="password" class="form-group col-6">
             <!-- Пароль -->
+            <label>Пароль</label>
             <input 
               class="form-control col-12" 
               type="password" 
               formControlName="password" 
               name="password" 
+              #passwordInput
               placeholder="Пароль..." 
               [(ngModel)]="student.password">
+              <i id="eye-vision" class="fa fa-eye" aria-hidden="true" (click)="handleTogglePasswordVisibility(passwordInput)"></i>
               <div 
-                *ngIf="form.get('password').invalid && form.get('password').dirty && form.get('password').touched" 
-                class="alert alert-danger col-12">
-                <div *ngIf="form.get('password').errors.minlength">Мінімум 2 символи</div>
+                *ngIf="form.get('password').invalid && (form.get('password').dirty || form.get('password').touched)" 
+                class="error col-12">
+                <div *ngIf="form.get('password').errors.minlength">Мінімум 8 символів</div>
                 <div *ngIf="form.get('password').errors.required">Це поле є обов'язковим</div>
               </div>
           </div>
@@ -141,6 +152,7 @@
         <div class="form-row">
           <div class="form-group col-12">
             <!-- Пошта -->
+            <label>Поштова скринька</label>
             <input 
               class="form-control col-12" 
               type="email" 
@@ -150,8 +162,8 @@
               [(ngModel)]="student.email"
               email>
             <div 
-              *ngIf="form.get('email').invalid && form.get('email').dirty && form.get('email').touched" 
-              class="alert alert-danger col-12">
+              *ngIf="form.get('email').invalid && (form.get('email').dirty || form.get('email').touched)" 
+              class="error col-12">
               <div *ngIf="form.get('email').errors.email">Поштова скринька повинна бути формату логін@домен</div>
               <div *ngIf="form.get('email').errors.required">Це поле є обов'язковим</div>
             </div>
@@ -169,7 +181,7 @@
                   name="image-input"
                   accept="image/*" 
                   (change)="handleAddPhoto($event)">
-                <label class="custom-file-label" for="customFile">Choose file</label>
+                <label class="custom-file-label" for="customFile">Виберіть фото</label>
             </div>
           </div>
         </div>

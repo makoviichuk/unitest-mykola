@@ -1,12 +1,11 @@
 import {Component, Inject, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import { QuestionsService } from '../questions.service';
-import { QuestionsComponent } from '../questions.component';
-
-import { IQuestions } from '../questions-interface';
-import { IQuestionAdd } from '../questions-interface';
-
-import { IResponse } from '../questions-interface';
+import {QuestionsService} from '../questions.service';
+import {QuestionsComponent} from '../questions.component';
+import {IQuestions} from '../questions-interface';
+import {IQuestionAdd } from '../questions-interface';
+import {IResponse} from '../questions-interface';
+import {ActivatedRoute} from '@angular/router';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 
 

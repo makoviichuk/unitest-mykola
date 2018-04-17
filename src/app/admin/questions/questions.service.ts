@@ -4,6 +4,8 @@ import { Observable } from 'rxjs/Observable';
 import { IQuestionsGet } from './questions-interface';
 import { IQuestionAdd } from './questions-interface';
 import { ITestNameByID } from './questions-interface';
+import { ITestsGet } from './questions-interface';
+
 
 import { IResponse } from './questions-interface';
 
@@ -13,6 +15,7 @@ export class QuestionsService {
 
   private getQuestionURL = 'http://vps9615.hyperhost.name:443/api/question/getRecords';
   private getAllQuestionsURL = 'http://vps9615.hyperhost.name:443/api/question/getRecords/0';
+  private getAllTestsURL = 'http://vps9615.hyperhost.name:443/api/test/getRecords/0';
   private addQuestionsURL = 'http://vps9615.hyperhost.name:443/api/question/insertData';
   private getEntityValueURL = 'http://vps9615.hyperhost.name:443/api/EntityManager/getEntityValues';
   private editQuestionURL = 'http://vps9615.hyperhost.name:443/api/question/update';
@@ -21,14 +24,16 @@ constructor(private http: HttpClient) { }
 
 
 getAllQuestions(): Observable<IQuestionsGet[]> {
-    return this.http.get<IQuestionsGet[]>(this.getAllQuestionsURL);
-  }
+  return this.http.get<IQuestionsGet[]>(this.getAllQuestionsURL);
+}
+
+getAllTests(): Observable<ITestsGet[]> {
+  return this.http.get<ITestsGet[]>(this.getAllTestsURL);
+}
 
 getQuestionById(id: number) {
     return this.http.get(this.getQuestionURL + '/' + id);
   }
-
-
 
 //   interface QuestionsAdd {
 //    question_id: string;

@@ -7,7 +7,7 @@
                   <select 
                     class="col-12" 
                     id="testSelect" 
-                    name="test" 
+                    selName="$event.target.value" 
                     (change)="setSelectedTestName($event.target.value)"
                     (change)="fillOutQuestionsTable($event.target.value)"
                     >
@@ -23,7 +23,7 @@
             </h1>
 
             <button mat-raised-button class="btn btn-primary" 
-            (click)="openModalAdd(selectedTestId, setSelectedTestName($event.target.value))">Додати завдання</button>
+            (click)="openModalAdd(selectedTestId, setSelectedTestName($event.target.value, selName))">Додати завдання</button>
 
     </header> 
   

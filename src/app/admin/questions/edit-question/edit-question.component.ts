@@ -1,22 +1,24 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {QuestionsService} from '../questions.service';
+import {QuestionsComponent} from '../questions.component';
+import {IQuestions} from '../questions-interface';
+import {IQuestionEdit} from '../questions-interface';
+import {IResponse} from '../questions-interface';
 import {ActivatedRoute} from '@angular/router';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import { QuestionsService } from '../questions.service';
-
-import { IQuestions } from '../questions-interface';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 
 
 @Component({
   selector: 'app-edit-question',
   templateUrl: './edit-question.component.html',
-  styleUrls: ['./edit-question.component.scss']
+  styleUrls: ['./edit-question.component.scss'],
+  providers: [ QuestionsService ]
 })
 
 
 export class EditQuestionComponent implements OnInit {
 
-//  subject: Subject;
   question: IQuestions;
   form: FormGroup;
 
@@ -26,6 +28,18 @@ export class EditQuestionComponent implements OnInit {
     private questionService: QuestionsService
   ) { }
 
+  // form;
+ questions: IQuestions[];
+ selTestId: string;
+
+ edit_question: IQuestionEdit = {
+    test_id: '', // this.questionsComponentInstance.selectedTestId,
+    question_text: 'some text',
+    level: '',
+    type_index: '',
+    type_name: '',
+    attachment: ''
+};
 
   ngOnInit() {
     this.getQuestion();

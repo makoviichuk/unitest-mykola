@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, Inject, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms'
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { StudentsService } from '../students.service';
 import { StudentAdd, StudentGet, IUser, GroupNameByID } from '../students-interface';
@@ -74,7 +74,7 @@ export class StudentEditFormComponent implements OnInit {
           this.faculties = value;
           this.service.getAvailableGroups(this.studentFaculty.faculty_id).subscribe(values => {
             this.groups = values;
-          })
+          });
         });
       });
     });
@@ -115,7 +115,8 @@ export class StudentEditFormComponent implements OnInit {
         Validators.minLength(3),
         Validators.maxLength(32),
         Validators.email
-      ]))
+      ])),
+      group: new FormControl(null, this.handleGroupValidator)
     });
   }
   //Записуємо масив об'єктів "Group" які приходять з сервера в масив "groups"
@@ -136,11 +137,11 @@ export class StudentEditFormComponent implements OnInit {
       //якщо факультет по якихось причинах немає груп, ЛОЛ :)
       } else {
         this.groups = [{
-          group_id: 'none',
-          group_name: 'Немає зареєстрованих груп для даного факультету',
-          speciality_id: 'none',
-          faculty_id: 'none'
-        }]
+          group_id: '',
+          group_name: 'Немає груп',
+          speciality_id: '',
+          faculty_id: ''
+        }];
       }
     });
   }
@@ -155,14 +156,21 @@ export class StudentEditFormComponent implements OnInit {
     });
     this.student.group_id = index;
   }
+  //Валідатор для груп
+  handleGroupValidator(control) {
+    if (control.value === 'Немає груп' || control.value === '') {
+      return {
+        'group': true
+      };
+    }
+  }
   //Рендеримо фотку в base64 код перед відправкою на сервер
   handleAddPhoto(event) {
     let input = event.target;
     const reader = new FileReader();
-    const that = this;
-    reader.onload = function() {
+    reader.onload = () => {
       let dataURL = reader.result;
-      that.student.photo = dataURL;
+      this.student.photo = dataURL;
     };
     reader.readAsDataURL(input.files[0]);
   }
@@ -181,10 +189,21 @@ export class StudentEditFormComponent implements OnInit {
       password_confirm: value.password,
       plain_password: value.password
     });
-    this.service.editStudent(this.data.student.user_id ,studentJSON).subscribe((data: IResponse) => {
-      if (data.response === 'ok') {
-        this.dialogRef.close();
-      }
-    });
+    this.service.editStudent(this.data.student.user_id ,studentJSON).subscribe(
+      (data: IResponse) => this.dialogRef.close(data.response),
+      error => this.dialogRef.close(error.error.response)
+    );
+  }
+  //Щоб побачити пароль
+  handleTogglePasswordVisibility(elem: HTMLInputElement) {
+    if (elem.type === 'password') {
+      elem.type = 'text';
+    } else {
+      elem.type = 'password';
+    }
+  }
+  //Метод який закриває діалогове вікно
+  handleClose(): void {
+    this.dialogRef.close();
   }
 }
