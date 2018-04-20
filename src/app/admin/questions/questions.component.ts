@@ -28,12 +28,15 @@ export class QuestionsComponent implements OnInit {
 
       questions: IQuestions[] = [];
       question: IQuestions;
+      testIdArr = [];
+      testNameArr = [];
       testNameSet = new Set();
 
       title_component = 'Завдання для тесту: ';
 
 
-  form: FormGroup;
+      form: FormGroup;
+
   constructor(
     private service: QuestionsService,
     private dialog: MatDialog
@@ -42,50 +45,51 @@ export class QuestionsComponent implements OnInit {
   ngOnInit() {
 
     this.fillOutQuestionsTable(event);
-    this.createTestsNamesSet();
+    this.createTestsNamesArray();
   }
 
 
-openModalAdd(id, name, selName) {
-  console.log('id = ', id, 'name = ', name);
-  console.log('selName = ', selName);
-
+  openModalAdd(selTestIndex, selTestName) {
+  console.log('selTestIndex = ', selTestIndex, ', selName = ', selTestName);
 
     this.dialog.open(AddQuestionComponent, {
       height: '600px',
       width: '800px',
-      data: {selId: id, selName: name}
+      data: {selId: this.testIdArr[selTestIndex - 1], selName: selTestName}
+      // - 1  becouse list has additional filds 'виберіть тест'
     });
   }
 
-openModalEdit(id) {
+  openModalEdit(selQuestionId, selQuestionTestName) {
     this.dialog.open(EditQuestionComponent, {
       height: '600px',
       width: '800px',
-      data: {test_id: id, name: 'test'}
+      data: {sel_quest_id: selQuestionId, sel_quest_name: selQuestionTestName}
     });
   }
 
-createTestsNamesSet() {
-  console.log('this.service.getAllTests() = ',
-   this.service.getAllTests().subscribe());
+  createTestsNamesArray() {
+     this.service.getAllTests().subscribe(data => {
+        // const testNameArr = [];
+        let testIdNameArr = [];
 
-    this.service.getAllTests().subscribe(data => {
-      const testArr = [];
-      let testIdNameArr = [];
+        for (let i = 0; i < data.length; i++) {
+          this.testIdArr.push(data[i].test_id);
+          this.testNameArr.push(data[i].test_name);
+            // this.testNameSet.add(data[i].test_name);
+        }
+        console.log('createTestsNamesArray.testArr = ', this.testNameArr);
+        // this.testNameSet.add(testNameArr);
 
-      for (let i = 0; i < data.length; i++) {
-             testArr.push(data[i].test_id);
-      }
-
-      testIdNameArr = data.map(val => {
-        return {
-          test_id: val.test_id,
-          test_name: val.test_name
-        };
-      });
-   });
-}
+        testIdNameArr = data.map(val => {
+          return {
+            test_id: val.test_id,
+            test_name: val.test_name
+          };
+        });
+        console.log('createTestsNamesArray.testIdNameArr = ', testIdNameArr);
+     });
+  }
 
   setSelectedTestName(selectedTestName): string {
     console.log('SETselectedTestName = ', selectedTestName);
@@ -113,10 +117,6 @@ createTestsNamesSet() {
                               };
                             });
 
-                           for (let j = 0; j < testIdNameArr.length; j++) {
-                              this.testNameSet.add(testIdNameArr[j].test_name);
-                            }
-
 
                    this.questions = [];
 
@@ -136,26 +136,28 @@ createTestsNamesSet() {
                               test: testIdNameArr[j].test_name
                             });
                             QuestionsComponent.selectedTestId = testIdNameArr[j].test_id;
-                           console.log('selectedTestId = ', QuestionsComponent.selectedTestId);
+                          //  console.log('selectedTestId = ', QuestionsComponent.selectedTestId);
                          }
                       }
 
                     }
-                    console.log('testIdNameArr = ', testIdNameArr);
+                    // console.log('testIdNameArr = ', testIdNameArr);
 
                   });
                 });
               }
 
 
+  handleDelete(index): void {
 
-    handleDelete(index): void {
-    this.service.deleteQuestion(index).subscribe((data: IResponse) => {
-      if (data.response === 'ok') {
+    console.log('index = ', index);
 
-        this.fillOutQuestionsTable(event);
-      }
-    });
+  //  this.service.deleteQuestion(index).subscribe((data: IResponse) => {
+  //     if (data.response === 'ok') {
+
+  //       this.fillOutQuestionsTable(event);
+  //     }
+  //   });
   }
 
 }

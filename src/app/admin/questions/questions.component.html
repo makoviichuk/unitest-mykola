@@ -7,26 +7,27 @@
                   <select 
                     class="col-12" 
                     id="testSelect" 
-                    selName="$event.target.value" 
+                    #testFild
                     (change)="setSelectedTestName($event.target.value)"
                     (change)="fillOutQuestionsTable($event.target.value)"
                     >
                     <option disabled>Виберіть тест</option>
-                    <option *ngFor="let t of testNameSet" [value]="t" >
+                    <option *ngFor="let t of testNameArr"  >
                       {{t}}
 
                     </option>
                     
                   </select>
                 </span>
-                
+  
             </h1>
+            <!-- <option *ngFor="let t of testNameArr" [value]="t" > -->
 
             <button mat-raised-button class="btn btn-primary" 
-            (click)="openModalAdd(selectedTestId, setSelectedTestName($event.target.value, selName))">Додати завдання</button>
+            (click)="openModalAdd(testFild.selectedIndex, testFild.options[testFild.selectedIndex].value)">Додати завдання</button>
 
     </header> 
-  
+ 
     <div class="row">
       <div class="col-lg-12">
         <div class="card">
@@ -54,7 +55,7 @@
                     <td>{{question.level}}</td>
                     <td>{{question.type}}</td>
                     <td>{{question.attachment}}</td>
-                    <td><i class="fa fa-cog" (click)="openModalEdit(question.question_id)"></i></td>
+                    <td><i class="fa fa-cog" (click)="openModalEdit(question.question_id, question.test)"></i></td>
                     <td><i class="fa fa-close" (click)="handleDelete(question.question_id)"></i></td> 
                   </tr>
                 </tbody>

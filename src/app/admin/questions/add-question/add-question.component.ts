@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {QuestionsService} from '../questions.service';
-import {QuestionsComponent} from '../questions.component';
+// import {QuestionsComponent} from '../questions.component';
 import {IQuestions} from '../questions-interface';
 import {IQuestionAdd } from '../questions-interface';
 import {IResponse} from '../questions-interface';
@@ -21,9 +21,10 @@ export class AddQuestionComponent implements OnInit {
 form;
  questions: IQuestions[];
  selTestId: string;
+ selTestName: string;
 
  new_question: IQuestionAdd = {
-    test_id: '', // this.questionsComponentInstance.selectedTestId,
+    test_id: this.selTestId,
     question_text: 'some text',
     level: '',
     type_index: '',
@@ -33,11 +34,21 @@ form;
 
 constructor(
   private questionService: QuestionsService,
-  private matDialogRef: MatDialogRef<AddQuestionComponent>
-) { }
+  private matDialogRef: MatDialogRef<AddQuestionComponent>,
+  @Inject(MAT_DIALOG_DATA) public data: any) { }
+
+
 
   ngOnInit() {
-    console.log('QuestionsComponent.selectedTestId = ', QuestionsComponent.selectedTestId);
+    // console.log('QuestionsComponent.selectedTestId = ', QuestionsComponent.selectedTestId);
+
+    this.selTestId = this.data.selId;
+    this.selTestName = this.data.selName;
+
+    console.log('selTestId = ', this.data.selId);
+    console.log('selTestName = ', this.selTestName);
+
+
 
     this.questionService.getAllQuestions()
       .subscribe((dataQuestions: IQuestions[]) => {
@@ -95,7 +106,8 @@ addQuestionSubmit() {
 
   const questionJSON = JSON.stringify({
 
-    test_id: QuestionsComponent.selectedTestId,
+    // test_id: QuestionsComponent.selectedTestId,
+    test_id: this.selTestId,
     question_text: this.new_question.type_name + ' [ ' + this.new_question.question_text + ' ]',
     level: this.new_question.level,
     type: this.new_question.type_index,

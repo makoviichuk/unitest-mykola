@@ -24,8 +24,9 @@ export class EditQuestionComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private matDialogRef: MatDialogRef<EditQuestionComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-    private questionService: QuestionsService
+    private questionService: QuestionsService,
+    private matDialogRef: MatDialogRef<EditQuestionComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   // form;
@@ -33,7 +34,7 @@ export class EditQuestionComponent implements OnInit {
  selTestId: string;
 
  edit_question: IQuestionEdit = {
-    test_id: '', // this.questionsComponentInstance.selectedTestId,
+    test_id: '',
     question_text: 'some text',
     level: '',
     type_index: '',
@@ -43,6 +44,9 @@ export class EditQuestionComponent implements OnInit {
 
   ngOnInit() {
     this.getQuestion();
+
+    console.log('selQuestId = ', this.data.sel_quest_id);
+    console.log('selQuestName = ', this.data.sel_quest_name);
 
     this.form = new FormGroup({
       'title': new FormControl(null, [Validators.required]),
