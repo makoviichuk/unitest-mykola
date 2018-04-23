@@ -46,7 +46,7 @@ export class TestsComponent implements OnInit{
 */
    getTestsById(id: number) {
      this.httpService.getTestsById(this.subjectId).subscribe(
-       data => {this.test = data}
+       data => {this.test = data;}
      );
    }
 
@@ -61,10 +61,19 @@ export class TestsComponent implements OnInit{
     matDialogRef.afterClosed().subscribe(() => this.getTestsById(this.subjectId));
    }
 
-   openDetails(id: any){
+   openDetails(id: any) {
     this.router.navigate(['/admin/testdetails'], {
       queryParams: {
         id: id
+      }
+    });
+   }
+
+   openQuestions(id: string, name: string) {
+    this.router.navigate(['/admin/questions'], {
+      queryParams: {
+        testId: id,
+        testName: name
       }
     });
    }

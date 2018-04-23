@@ -9,7 +9,7 @@ export interface IQuestions {
 }
 
 
-export interface IQuestionsGet {
+export interface IQuestionGet {
     question_id: string;
     test_id: string;
     question_text: string;
@@ -18,25 +18,16 @@ export interface IQuestionsGet {
     attachment: string;
 }
 
-export interface IQuestionAdd {
+export interface IQuestionSet {
     test_id: string;
     question_text: string;
     level: string;
+    type: string;
     type_name: string;
-    type_index: string;
     attachment: string;
 }
 
-export interface IQuestionEdit {
-    test_id: string;
-    question_text: string;
-    level: string;
-    type_name: string;
-    type_index: string;
-    attachment: string;
-}
 
-//    Test: {test_id, test_name, subject_id, tasks, time_for_test, enabled, attempts}
 export interface ITestsGet {
     test_id: string;
     test_name: string;

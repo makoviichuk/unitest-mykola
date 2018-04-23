@@ -1,12 +1,14 @@
 <div class="card">
   <div class="card-header d-flex align-items-center">
-  <h3>Редагування завдання з id: [sel_question_id]] для тесту: [sel_test_name] : </h3>
+  <h3>Редагування завдання з id: {{sel_question_id}}, для тесту: {{sel_question_test_name}}: </h3>
   </div>
   <div class="card-body">
     <p></p>
  
     
-  <form class="form-group" [formGroup]="form" (submit)="addQuestionSubmit()">
+  <form class="form-group" 
+        [formGroup]="form" 
+        (submit)="editQuestionSubmit()">
 
     <div class="form-row">
             <div class="form-group col-10">
@@ -15,13 +17,18 @@
                 class="form-control col-12" 
                 id="typeSelect" 
                 name="type" 
-                #typeField (change)="setQuestionType(typeField)" 
+                #typeField 
+                (change)="setQuestionType(typeField)" 
                 >
-
-                 <option>Простий вибір [Simple Choice]</option> 
-                 <option>Мульти-вибір [Multi Choice]</option> 
-                 <option>Поле вводу [Input Field]</option> +
-                 <option>Поле вводу із числовим аналізатором [Numerical]</option> 
+                <option 
+                  *ngFor="let questType of ['Простий вибір (Simple Choice)',
+                                            'Мульти-вибір (Multi Choice)',
+                                            'Поле вводу (Input Field)',
+                                            'Поле вводу із числовим аналізатором (Numerical)'];
+                          let i = index" 
+                  [selected]="i + 1 == sel_question.type">
+                  {{questType}}
+                </option>
              
               </select>
             </div>
@@ -31,28 +38,13 @@
                 class="form-control col-11  " 
                 id="levelSelect" 
                 name="level" 
-                #levelField (change)="setQuestionLevel(levelField)">
-                      <option value="1" selected>1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                      <option value="6">6</option>
-                      <option value="7">7</option>
-                      <option value="8">8</option>
-                      <option value="9">9</option> 
-                      <option value="10">10</option>
-                      <option value="11">11</option>
-                      <option value="12">12</option>
-                      <option value="13">13</option>
-                      <option value="14">14</option>
-                      <option value="15">15</option>
-                      <option value="16">16</option>
-                      <option value="17">17</option>
-                      <option value="18">18</option>
-                      <option value="19">19</option>
-                      <option value="20">20</option>
-                     
+                #levelField
+                (change)="setQuestionLevel(levelField)">
+                  <option 
+                    *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]" 
+                    [selected]="i == sel_question.level">
+                      {{i}}
+                  </option>
               </select>
             </div>
         </div>
@@ -69,23 +61,28 @@
                 class="col-sm-10 form-control form-control-success" 
                 rows="5" 
                 id="description"
-                #descriptionField (change)="setQuestionText(descriptionField)"
-              ></textarea>
-    
+               
+                name="question_text"
+                #descriptionField 
+                (change)="setQuestionText(descriptionField)"
+              >{{sel_question.question_text}}</textarea>
+              <!-- formControlName="question_text" 
+              [(ngModel)]="sel_question.question_text" -->
             </div>
           </div>
 
       <div class="form-row">
            
             <div class="form-group col-5"> 
-              <label>Кількість варіантів</label>
+              <label>Кількість варіантів відповідей</label>
               <select 
                 class="form-control col-4  " 
                 id="variants" 
                 name="variants" 
                 #variantsField (change)="setVariantsNumber(variantsField)"
               >
-                      <option value="1" selected>1</option>
+                      <option value="0" selected>1</option>
+                      <option value="1">1</option>
                       <option value="2">2</option>
                       <option value="3">3</option>
                       <option value="4">4</option>
@@ -97,17 +94,20 @@
             </div>
             
              <div class="form-group col-7">
-              <label>Ресурс варіантів</label>
+              <label>Ресурс варіантів відповідей</label>
               <select 
                 class="form-control col-8" 
                 id="resourceSelect" 
                 name="resource" 
                 #resourceField (change)="setResourse(resourceField)" >
+                  <option 
+                  *ngFor="let questAttachment of ['Текст',
+                                            'Зображення',
+                                            'Текст і зображення']"
+                  [selected]="questAttachment === sel_question.attachment">
+                  {{questAttachment}}
+                </option>
 
-                 <option>Текст</option> 
-                 <option>Зображення</option> 
-                 <option>Текст і зображення</option> 
-                              
               </select>
             </div>
             

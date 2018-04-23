@@ -1,17 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { QuestionsService } from './questions.service';
 import {AddQuestionComponent} from './add-question/add-question.component';
 import {EditQuestionComponent} from './edit-question/edit-question.component';
 
-import { IQuestionsGet } from './questions-interface';
-import { IQuestionAdd } from './questions-interface';
+import { IQuestionGet } from './questions-interface';
+import { IQuestionSet } from './questions-interface';
 import { IQuestions } from './questions-interface';
 import { group } from '@angular/animations';
-
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
-
+import { MatDialog} from '@angular/material';
 import { IResponse } from './questions-interface';
+import { Router, ActivatedRoute, Params } from '@angular/router';
+import { DeleteConfirmComponent } from '../../shared/delete-confirm/delete-confirm.component';
+import { ResponseMessageComponent } from '../../shared/response-message/response-message.component';
+
+
 
 @Component({
   selector: 'app-questions',
@@ -22,142 +25,150 @@ import { IResponse } from './questions-interface';
 
 export class QuestionsComponent implements OnInit {
 
+  @Input() DIALOG_CLOSED: boolean;
 
- static selectedTestId: string;
+      selectedTestId: string;
       selectedTestName: string;
-
-      questions: IQuestions[] = [];
+      questions: IQuestionGet[] = [];
       question: IQuestions;
-      testIdArr = [];
-      testNameArr = [];
-      testNameSet = new Set();
-
+      testIdNameArr = [];
       title_component = 'Завдання для тесту: ';
-
-
       form: FormGroup;
+
+      testId: string;
+      testName: string;
+    // these params passed from  test.component, there is need to prescribe the method
+    //
+    // openQuestions(id: string, name: string) {
+    //     this.router.navigate(['/admin/questions'], {
+    //       queryParams: { testId: id, testName: name }
+    //     });
+    //    }
+    // }
+    // and on icon click event should be hanged method (click)="openQuestions(t.test_id, t.test_name)
 
   constructor(
     private service: QuestionsService,
-    private dialog: MatDialog
-  ) { }
+    private dialog: MatDialog,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) {
+      this.activatedRoute.queryParams.subscribe(params => {
+      this.testId = params['testId'];
+      this.testName = params['testName'];
+      });
+      console.log('Called Constructor');
+   }
+
+
 
   ngOnInit() {
+    console.log(' this.testId = ',  this.testId, ', this.testName = ', this.testName);
+    this.createTestsIdNamesArray();
 
-    this.fillOutQuestionsTable(event);
-    this.createTestsNamesArray();
+    if (this.testId) {
+        this.createQuestionsTableByTestId(this.testId, 10, 0);
+    }
+
+  }
+
+
+   createQuestionsTableByTestId(test_id, limit = 10, offset = 0) {
+    this.testId = test_id;
+    // this.testName = ;
+    this.service.getQuestionsByTestId(test_id, limit, offset).subscribe(data => {
+      if ( data.length ) {
+        this.questions = data;
+      } else {
+        this.questions = [];
+        alert(' Вибраний тест ще не має завдань. Додайте завдання');
+      }
+      console.log('createQuestionsTableByTestId (pagination) = ', this.questions);
+    });
+  }
+
+  createQuestionsTableBySelTestIndex(selTestIndex, limit = 10, offset = 0) {
+    this.testId = this.testIdNameArr[selTestIndex - 1].test_id;
+    this.testName = this.testIdNameArr[selTestIndex - 1].test_name;
+    this.service.getQuestionsByTestId(this.testId, limit, offset).subscribe(data => {
+      if ( data.length ) {
+        this.questions = data;
+      } else {
+        this.questions = [];
+        alert(' Вибраний тест ще не має завдань. Додайте завдання');
+      }
+      console.log('createQuestionsTableBySelTestIndex (pagination) = ', this.questions);
+    });
   }
 
 
   openModalAdd(selTestIndex, selTestName) {
-  console.log('selTestIndex = ', selTestIndex, ', selName = ', selTestName);
+    // - 1  becouse dropped list has additional filds 'виберіть тест'
+    this.testId = this.testIdNameArr[selTestIndex - 1].test_id;
+    this.testName = selTestName;
+  console.log('this.testId = ', this.testId, ', this.testName = ', this.testName);
 
-    this.dialog.open(AddQuestionComponent, {
+    const matDialogRef = this.dialog.open(AddQuestionComponent, {
       height: '600px',
       width: '800px',
-      data: {selId: this.testIdArr[selTestIndex - 1], selName: selTestName}
-      // - 1  becouse list has additional filds 'виберіть тест'
+      data: {selId: this.testId, selName: this.testName}
     });
+    matDialogRef.afterClosed().subscribe( () => this.createQuestionsTableByTestId(this.testId, 10, 0) );
   }
 
-  openModalEdit(selQuestionId, selQuestionTestName) {
-    this.dialog.open(EditQuestionComponent, {
-      height: '600px',
-      width: '800px',
-      data: {sel_quest_id: selQuestionId, sel_quest_name: selQuestionTestName}
-    });
-  }
+    openModalEdit(selQuestion) {
+      const matDialogRef = this.dialog.open(EditQuestionComponent, {
+        height: '600px',
+        width: '800px',
+        data: {sel_quest: selQuestion}
+      });
+      matDialogRef.afterClosed().subscribe( () => this.createQuestionsTableByTestId(selQuestion.test_id, 10, 0) );
+    }
 
-  createTestsNamesArray() {
+
+  createTestsIdNamesArray() {
      this.service.getAllTests().subscribe(data => {
-        // const testNameArr = [];
-        let testIdNameArr = [];
-
-        for (let i = 0; i < data.length; i++) {
-          this.testIdArr.push(data[i].test_id);
-          this.testNameArr.push(data[i].test_name);
-            // this.testNameSet.add(data[i].test_name);
-        }
-        console.log('createTestsNamesArray.testArr = ', this.testNameArr);
-        // this.testNameSet.add(testNameArr);
-
-        testIdNameArr = data.map(val => {
+        this.testIdNameArr = data.map(val => {
           return {
             test_id: val.test_id,
             test_name: val.test_name
           };
         });
-        console.log('createTestsNamesArray.testIdNameArr = ', testIdNameArr);
+        console.log('createTestsIdNamesArray.testIdNameArr = ', this.testIdNameArr);
      });
   }
 
-  setSelectedTestName(selectedTestName): string {
-    console.log('SETselectedTestName = ', selectedTestName);
-    return selectedTestName;
-  }
 
-
-              fillOutQuestionsTable(selectedTestName): void {
-                console.log('selectedTestName = ', selectedTestName);
-
-                this.service.getAllQuestions().subscribe(data => {
-                          const testArr = [];
-                          let testIdNameArr = [];
-                          for (let i = 0; i < data.length; i++) {
-                                 testArr.push(data[i].test_id);
-                          }
-
-                  const body = JSON.stringify({entity: 'Test', ids: testArr});
-
-                  this.service.getEntityValue(body).subscribe(response => {
-                            testIdNameArr = response.map(val => {
-                              return {
-                                test_id: val.test_id,
-                                test_name: val.test_name
-                              };
-                            });
-
-
-                   this.questions = [];
-
-                    for (let i = 0; i < data.length; i++) {
-
-                     for (let j = 0; j < testIdNameArr.length; j++) {
-
-                          if ( testIdNameArr[j].test_name === selectedTestName  &&
-                            testIdNameArr[j].test_id === data[i].test_id) {
-                            this.questions.push({
-                              question_id: data[i].question_id,
-                              test_id: data[i].test_id,
-                              question_text: data[i].question_text,
-                              level: data[i].level,
-                              type: data[i].type,
-                              attachment: data[i].attachment,
-                              test: testIdNameArr[j].test_name
-                            });
-                            QuestionsComponent.selectedTestId = testIdNameArr[j].test_id;
-                          //  console.log('selectedTestId = ', QuestionsComponent.selectedTestId);
-                         }
-                      }
-
-                    }
-                    // console.log('testIdNameArr = ', testIdNameArr);
-
-                  });
-                });
+  handleDelete(question_id): void {
+    const dialogRef = this.dialog.open(DeleteConfirmComponent, {
+      width: '400px',
+      data: {
+        message: 'Ви справді бажаєте видалити завдання?'
+      }
+    });
+    dialogRef.afterClosed().subscribe((Response: boolean) => {
+      if (Response) {
+        this.service.deleteQuestion(question_id).subscribe((data: IResponse) => {
+          if (data.response === 'ok') {
+            this.dialog.open(ResponseMessageComponent, {
+              width: '400px',
+              data: {
+                message: 'Завдання було успішно видалено!'
               }
-
-
-  handleDelete(index): void {
-
-    console.log('index = ', index);
-
-  //  this.service.deleteQuestion(index).subscribe((data: IResponse) => {
-  //     if (data.response === 'ok') {
-
-  //       this.fillOutQuestionsTable(event);
-  //     }
-  //   });
+            });
+            this.createQuestionsTableByTestId(this.testId, 10, 0);
+          }},
+          () => {
+            this.dialog.open(ResponseMessageComponent, {
+              width: '400px',
+              data: {
+                message: 'Виникла помилка при видаленні цього завдання!'
+              }
+            });
+        });
+      }
+    });
   }
+
 
 }
