@@ -13,6 +13,7 @@ import { IResponse } from './questions-interface';
 export class QuestionsService {
 
 
+  private getQuestionsNumberByTestURL = 'http://vps9615.hyperhost.name:443/api/question/countRecordsByTest';
   private getQuestionURL = 'http://vps9615.hyperhost.name:443/api/question/getRecords';
   private getAllQuestionsURL = 'http://vps9615.hyperhost.name:443/api/question/getRecords/0';
   private getQuestionsByTestIdBaseURL = 'http://vps9615.hyperhost.name:443/api/question/getRecordsRangeByTest';
@@ -37,17 +38,21 @@ getQuestionById(id: number) {
     return this.http.get(this.getQuestionURL + '/' + id);
   }
 
-getQuestionsByTestId(test_id: string, limit: number, offset: number): Observable<IQuestionGet[]> {
+//   GET/ http://<host>/question/countRecordsByTest/<test_id>
+// -- returns JSON in following format {"numberOfRecords": "10"} using for pagination
+
+getQuestionsNumberByTest(test_id: string) {
+  return this.http.get(this.getQuestionsNumberByTestURL + '/' + test_id);
+}
+
+getQuestionsByTestId(test_id: string, limit: string, offset: number): Observable<IQuestionGet[]> {
 return this.http.get<IQuestionGet[]>(this.getQuestionsByTestIdBaseURL + '/' + test_id + '/' + limit + '/' + offset);
   }
 
-//   interface QuestionsAdd {
-//    question_id: string;
-//    test_id: string;
-//    question_text: string;
-//    level: string;
-//    type: string;
-//    attachment: string;}
+  // getQuestionsByTestId(test_id: string, limit: number, offset: number): Observable<IQuestionGet[]> {
+  //   return this.http.get<IQuestionGet[]>(this.getQuestionsByTestIdBaseURL + '/' + test_id + '/' + limit + '/' + offset);
+  //     }
+
 
 addQuestion(body): Observable<IQuestionSet|IResponse> {
   return this.http.post<IQuestionSet|IResponse>(this.addQuestionsURL, body);

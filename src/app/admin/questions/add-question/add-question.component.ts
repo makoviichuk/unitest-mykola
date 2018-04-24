@@ -25,11 +25,11 @@ export class AddQuestionComponent implements OnInit {
 
  new_question: IQuestionSet = {
     test_id: this.selTestId,
-    question_text: 'some text',
-    level: '',
-    type: '',
+    question_text: 'no text',
+    level: '1',
+    type: '1',
     type_name: '',
-    attachment: ''
+    attachment: 'no attachment'
 };
 
 constructor(

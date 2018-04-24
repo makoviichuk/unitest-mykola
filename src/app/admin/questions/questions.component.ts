@@ -13,7 +13,8 @@ import { IResponse } from './questions-interface';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { DeleteConfirmComponent } from '../../shared/delete-confirm/delete-confirm.component';
 import { ResponseMessageComponent } from '../../shared/response-message/response-message.component';
-
+import { PaginationInstance } from 'ngx-pagination';
+import { forEach } from '@angular/router/src/utils/collection';
 
 
 @Component({
@@ -25,7 +26,12 @@ import { ResponseMessageComponent } from '../../shared/response-message/response
 
 export class QuestionsComponent implements OnInit {
 
-  @Input() DIALOG_CLOSED: boolean;
+      public config: PaginationInstance = {
+        itemsPerPage: 5,
+        currentPage: 1
+      };
+
+      offset = 0;
 
       selectedTestId: string;
       selectedTestName: string;
@@ -67,39 +73,56 @@ export class QuestionsComponent implements OnInit {
     this.createTestsIdNamesArray();
 
     if (this.testId) {
-        this.createQuestionsTableByTestId(this.testId, 10, 0);
+        this.createQuestionsTableByTestId(this.testId);
     }
 
   }
 
 
-   createQuestionsTableByTestId(test_id, limit = 10, offset = 0) {
+   createQuestionsTableByTestId(test_id) {
     this.testId = test_id;
     // this.testName = ;
-    this.service.getQuestionsByTestId(test_id, limit, offset).subscribe(data => {
-      if ( data.length ) {
-        this.questions = data;
-      } else {
-        this.questions = [];
-        alert(' Вибраний тест ще не має завдань. Додайте завдання');
-      }
-      console.log('createQuestionsTableByTestId (pagination) = ', this.questions);
+    this.service.getQuestionsNumberByTest(this.testId).subscribe(respond => {
+      console.log('questionsNumberByTest = ', respond['numberOfRecords']); // returns JSON in format {"numberOfRecords": "10"}
+      const questionsNumberByTest = respond['numberOfRecords'];
+
+      this.service.getQuestionsByTestId(test_id, questionsNumberByTest, this.offset).subscribe(data => {
+        if ( data.length ) {
+          this.questions = data;
+        } else {
+          this.questions = [];
+          alert(' Вибраний тест ще не має завдань. Додайте завдання');
+        }
+        console.log('createQuestionsTableByTestId = ', this.questions);
+      });
+
     });
+
+
   }
 
-  createQuestionsTableBySelTestIndex(selTestIndex, limit = 10, offset = 0) {
+  createQuestionsTableBySelTestIndex(selTestIndex, limit = 1000, offset = 0) {
     this.testId = this.testIdNameArr[selTestIndex - 1].test_id;
     this.testName = this.testIdNameArr[selTestIndex - 1].test_name;
-    this.service.getQuestionsByTestId(this.testId, limit, offset).subscribe(data => {
-      if ( data.length ) {
-        this.questions = data;
-      } else {
-        this.questions = [];
-        alert(' Вибраний тест ще не має завдань. Додайте завдання');
-      }
-      console.log('createQuestionsTableBySelTestIndex (pagination) = ', this.questions);
+
+    this.service.getQuestionsNumberByTest(this.testId).subscribe(respond => {
+      console.log('questionsNumberByTest = ', respond['numberOfRecords']); // returns JSON in format {"numberOfRecords": "10"}
+      const questionsNumberByTest = respond['numberOfRecords'];
+
+      this.service.getQuestionsByTestId(this.testId, questionsNumberByTest, this.offset).subscribe(data => {
+        if ( data.length ) {
+          this.questions = data;
+        } else {
+          this.questions = [];
+          alert(' Вибраний тест ще не має завдань. Додайте завдання');
+        }
+        console.log('createQuestionsTableBySelTestIndex = ', this.questions);
+      });
+
     });
+
   }
+
 
 
   openModalAdd(selTestIndex, selTestName) {
@@ -113,7 +136,7 @@ export class QuestionsComponent implements OnInit {
       width: '800px',
       data: {selId: this.testId, selName: this.testName}
     });
-    matDialogRef.afterClosed().subscribe( () => this.createQuestionsTableByTestId(this.testId, 10, 0) );
+    matDialogRef.afterClosed().subscribe( () => this.createQuestionsTableByTestId(this.testId) );
   }
 
     openModalEdit(selQuestion) {
@@ -122,7 +145,7 @@ export class QuestionsComponent implements OnInit {
         width: '800px',
         data: {sel_quest: selQuestion}
       });
-      matDialogRef.afterClosed().subscribe( () => this.createQuestionsTableByTestId(selQuestion.test_id, 10, 0) );
+      matDialogRef.afterClosed().subscribe( () => this.createQuestionsTableByTestId(selQuestion.test_id) );
     }
 
 
@@ -156,7 +179,7 @@ export class QuestionsComponent implements OnInit {
                 message: 'Завдання було успішно видалено!'
               }
             });
-            this.createQuestionsTableByTestId(this.testId, 10, 0);
+            this.createQuestionsTableByTestId(this.testId);
           }},
           () => {
             this.dialog.open(ResponseMessageComponent, {
