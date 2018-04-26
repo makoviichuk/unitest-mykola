@@ -1,6 +1,7 @@
 header {
     display: flex;
     justify-content: space-between;
+    // justify-content: space-around;
     align-items: center;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -14,8 +15,14 @@ header {
 }
 
 .table-colspan {
-  text-align: center;
+//   text-align: center;
 }
+
+.d-flex {
+    display: flex; /* flex || inline-flex */
+    justify-content: flex-start;
+  }
+
 .form-has-error {
   color: #dc3545;
 }

@@ -38,6 +38,16 @@ export interface ITestsGet {
     attempts: string;
 }
 
+
+export interface IAnswerSet {
+    question_id: string;
+    true_answer: string;
+    answer_text: string;
+    attachment: string;
+  }
+
+
+
 export interface ITestNameByID { // адаптувати відповідно до сутності Question
     test_id: string;
     test_name: string;

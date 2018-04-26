@@ -22,10 +22,10 @@
                 </span>
   
             </h1>
-            <!-- (change)="fillOutQuestionsTable($event.target.value)" -->
             
             <button mat-raised-button class="btn btn-primary" 
-            (click)="openModalAdd(testFild.selectedIndex, testFild.options[testFild.selectedIndex].value)">Додати завдання</button>
+            (click)="openModalAdd(testFild.selectedIndex, testFild.options[testFild.selectedIndex].value)"
+            >Додати завдання</button>
 
     </header> 
  
@@ -42,23 +42,50 @@
                     <!-- <th>Тест</th> -->
                     <!-- <th>question_id</th> -->
                     <th class="col-sm-1">Рівень</th>
-                    <th class="col-sm-1">Тип</th>
+                    <th class="col-sm-1 ">Тип</th>
                     <th class="col-sm-2">Вкладення</th>
-                    <th  class="col-sm-2" colspan="2">Керування</th>
+                    <th class="col-sm-2" colspan="2">Керування</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr class="d-flex" *ngFor="let question of questions | paginate: config; let i = index">
                     <!-- <th>{{i+1}}</th> -->
                     <th class="col-sm-1" scope="row">{{(config.currentPage - 1) * config.itemsPerPage + i +1}}</th>
+                    
                     <td class="col-sm-5">{{question.question_text}} </td>
                     <!-- <td>{{this.testName}} </td> -->
                     <!-- <td>{{question.question_id}} </td> -->
+
                     <td class="col-sm-1">{{question.level}}</td>
-                    <td class="col-sm-1">{{question.type}}</td>
-                    <td class="col-sm-2">{{question.attachment}}</td>
+
+                    <td class="col-sm-1">
+                      
+                      <div *ngIf="question.type === '1'" class="fa fa-dot-circle-o">&nbsp;Simple</div>
+                      <div *ngIf="question.type === '1'" class="fa fa-circle-o">&nbsp;choise</div>
+
+                      <div *ngIf="question.type === '2'" class="fa fa-check-square-o">&nbsp;Multi</div>
+                      <div *ngIf="question.type === '2'" class="fa fa-check-square-o">&nbsp;choise</div>
+                      <div *ngIf="question.type === '3'" class="fa">Text&nbsp;field</div>
+                      <div *ngIf="question.type === '3'" class="fa">
+                          <span class="fa fa-font"></span>
+                          <span class="fa fa-pencil"></span>
+                          <span class="fa fa-paragraph"></span>
+                      </div>
+                      <div *ngIf="question.type === '4'" class="fa">Numerical</div>
+                      <div *ngIf="question.type === '4'" class="fa">[<i>&pi;</i>=3,14...]</div>
+                    </td>
+
+                    <td class="col-sm-2">
+                        <div *ngIf="question.attachment !== undefined; then thenBlock else elseBlock"></div>   
+                        <ng-template #thenBlock>
+                          <img [src]="question.attachment" width="50">
+                        </ng-template>  
+                        <ng-template #elseBlock>{{question.attachment}}</ng-template> 
+                      <!-- <img *ngIf="question.attachment !== undefined" [src]="question.attachment" width="50"> -->
+                    </td>
+
                     <td class="col-sm-2" >
-                      <div >
+                      <div>
                         <span style="float: left; width: 33%;">
                           <i class="fa fa-list-ol" (click)="openModalEdit(question)" title="Відповіді"></i>
                         </span>

@@ -9,122 +9,175 @@
   <form class="form-group" [formGroup]="form" (submit)="addQuestionSubmit()">
 
     <div class="form-row">
-            <div class="form-group col-10">
-              <label>Тип завдання</label>
-              <select 
-                class="form-control col-12" 
-                id="typeSelect" 
-                name="type" 
-                #typeField (change)="setQuestionType(typeField)" 
-                >
+           
+              <div class="form-group col-6"> 
 
-                 <option>Простий вибір [Simple Choice]</option> 
-                 <option>Мульти-вибір [Multi Choice]</option> 
-                 <option>Поле вводу [Input Field]</option> +
-                 <option>Поле вводу із числовим аналізатором [Numerical]</option> 
-             
-              </select>
-            </div>
-            <div class="form-group col-2"> 
-              <label>Рівень</label>
-              <select 
-                class="form-control col-11  " 
-                id="levelSelect" 
-                name="level" 
-                #levelField (change)="setQuestionLevel(levelField)">
-                      <option value="1" selected>1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                      <option value="6">6</option>
-                      <option value="7">7</option>
-                      <option value="8">8</option>
-                      <option value="9">9</option> 
-                      <option value="10">10</option>
-                      <option value="11">11</option>
-                      <option value="12">12</option>
-                      <option value="13">13</option>
-                      <option value="14">14</option>
-                      <option value="15">15</option>
-                      <option value="16">16</option>
-                      <option value="17">17</option>
-                      <option value="18">18</option>
-                      <option value="19">19</option>
-                      <option value="20">20</option>
-                     
-              </select>
-            </div>
-        </div>
+                  <label>Текст завдання</label>
+                  <textarea 
+                    class="form-control col-12 form-control-success" 
+                    placeholder="Введіть текст завдання..."
+                    rows="6" 
+                    id="description"
+                    #descriptionField (change)="setQuestionText(descriptionField)"
+                  ></textarea>
+                 
+              </div>
+
+              <div class="form-group col-4">
+                  <label>Вкладення
+                    <input type="file" accept="image/*" (change)="addQuestionAttachment($event)">
+                  </label>
+                  <img *ngIf="new_question.attachment !== undefined" 
+                       [src]="new_question.attachment" 
+                       width="100">
+                        <!-- <ng-template #elseBlok>  
+                          <p>elseBlok</p>  
+                        </ng-template>  -->
+            <!-- <img *ngIf="question.attachment !== undefined" [src]="question.attachment" width="50"> -->
+              </div>
+
+              <div class="form-group col-2"> 
+                  <label>Рівень</label>
+                  <select 
+                    class="form-control col-10  " 
+                    id="levelSelect" 
+                    name="level" 
+                    #levelField
+                    (change)="setQuestionLevel(levelField)">
+                      <option 
+                        *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]" 
+                      >
+                          {{i}}
+                      </option>
+                  </select>
+                </div>
+
+                        <!-- [selected]="i == sel_question.level" -->
+      </div> 
      
        <br> 
-       <br> 
         
-       <div class="form-group row">
-            <label class="col-sm-12">Текст завдання</label>
-            <div class="col-sm-12"
-            >
-              <textarea 
-                placeholder="Введіть текст завдання..."
-                class="col-sm-10 form-control form-control-success" 
-                rows="5" 
-                id="description"
-                #descriptionField (change)="setQuestionText(descriptionField)"
-              ></textarea>
-    
-            </div>
+      <div class="form-group row">
+          
+
+          <div class="form-group col-4">
+
+              <!-- <label>Виберіть тип відповіді</label> -->
+              <select class="form-control col-12" 
+                      id="typeSelect" 
+                      name="type" 
+                      #typeField (change)="setQuestionType(typeField)" 
+                      (change)="onQuestionTypeSelect($event)"
+                >
+                 <option disabled>Виберіть тип відповіді</option>
+                 <option value="1">Простий вибір [Simple Choice]</option> 
+                 <option value="2">Мульти-вибір [Multi Choice]</option> 
+                 <option value="3">Текстове поле вводу [Input Field]</option> 
+                 <option value="4">Числове поле вводу [Numerical]</option> 
+              </select>
+
           </div>
 
-      <div class="form-row">
-           
-            <div class="form-group col-5"> 
-              <label>Кількість варіантів відповідей</label>
-              <select 
-                class="form-control col-4  " 
-                id="variants" 
-                name="variants" 
-                #variantsField (change)="setVariantsNumber(variantsField)"
+          <div class="form-group col-5">
+              <select class="form-control col-12" 
+                      id="resourceSelect"
+                      (change)="onAnswerResourseSelect($event)"
               >
-                      <option value="1" selected>1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                      <option value="6">6</option>
-                      <option value="7">7</option>
-                      <option value="8">8</option>
+                  <option disabled>Виберіть ресурс варіантів відповіді</option>
+                  <option value="1">Тільки текст</option> 
+                  <option *ngIf="(correctAnswerInputType !== 'txt' && correctAnswerInputType !== 'num')" value="2">
+                    Тільки зображення
+                  </option> 
+                  <option *ngIf="(correctAnswerInputType !== 'num')" value="3">
+                    Текст і зображення
+                  </option> 
               </select>
             </div>
             
-             <div class="form-group col-7">
-              <label>Ресурс варіантів відповідей</label>
-              <select 
-                class="form-control col-8" 
-                id="resourceSelect" 
-                name="resource" 
-                #resourceField (change)="setResourse(resourceField)" >
-
-                 <option>Текст</option> 
-                 <option>Зображення</option> 
-                 <option>Текст і зображення</option> 
-                              
-              </select>
-            </div>
+           <input
+                  (click)="addAnswer()"  
+                  type="button"  
+                  value="Додати варіант відповіді" 
+            >
             
-        </div> 
-        
-       <br> 
-       <br> 
-    
-    
-    
-      <div class="form-group row">
+                         
+      </div>
 
-        <div class="col-sm-11 offset-sm-2">
-          <input type="submit" value="Додати варіанти відповідей" class="btn btn-primary">
+<br>
+<br>
+
+<div *ngIf="answerNumber.length !== 0" class="form-group row">
+      <table>
+          <thead>
+              <tr>
+                  <th *ngIf="(correctAnswerInputType === 'radio')">Варіанти відповіді</th>
+                  <th *ngIf="(correctAnswerInputType === 'checkbox')">Варіанти відповіді</th>
+                  <th *ngIf="(correctAnswerInputType === 'txt')">Введіть правильні варіанти відповіді</th>
+                  <th *ngIf="(correctAnswerInputType === 'num')">Введіть допустимі межі відповіді</th>
+                  
+                  <th *ngIf="(correctAnswerInputType !== 'txt' && correctAnswerInputType !== 'num')"> 
+                    Позначте правильну відповідь
+                  </th>
+              </tr>
+          </thead>
           
+          <tr *ngFor="let number of answerNumber" >
+              
+                <td *ngIf="answerResourse === 'text' || correctAnswerInputType === 'num' ">
+                    <label class="center-block" >
+                      <input  type = "text"  [name] = "number">
+                    </label>
+                </td>
+                <!-- class="form-control"  correctAnswerInputType === '' -->
+                
+                <td *ngIf=" answerResourse === 'file' && correctAnswerInputType !== 'num' ">
+                    <label class="center-block" >
+                      <input type="file" accept="image/*" (change)="addAnsverAttachment($event)" name="number"> 
+                             <img *ngIf="new_answer.attachment !== undefined" 
+                             [src]="new_answer.attachment" 
+                             width="50">
+                    </label>
+                </td>
+
+                     <!--  && correctAnswerInputType !== 'num'-->
+                     
+                <td *ngIf="answerResourse === 'text_file' && correctAnswerInputType !== 'num' ">
+                    <label class="center-block" >
+                      <input  type = "text"  [name] = "number">
+                      <input  type="file" accept="image/*" (change)="addAnsverAttachment($event)" > 
+                              <img *ngIf="new_answer.attachment !== undefined" 
+                              [src]="new_answer.attachment" 
+                              width="50">
+                    </label>
+                </td>
+
+
+
+
+                <td *ngIf="(correctAnswerInputType === 'radio' || correctAnswerInputType === 'checkbox')">
+                    &nbsp;&nbsp; <input [type]="correctAnswerInputType" name="correctAnswer" (click)="correctAnswer(number)">
+                </td>
+
+                <td *ngIf=" correctAnswerInputType === 'txt' ">
+                     <input type="checkbox" name="correctAnswer" checked  disabled >
+                </td>
+          </tr>
+      </table>
+
+</div>
+      
+       
+
+  
+    
+      <div class="form-group row d-flex justify-content-center">
+
           <input (click)="closeDialog()" value="Відмінити" class="btn btn-danger">
-        </div>
+          <input type="submit" value=" Зберегти " class="btn btn-primary">
+
+        <!-- <div class="form-row d-flex justify-content-center"></div> -->
+
+        <!-- <div class="col-sm-11 offset-sm-2">    </div> -->
 
       </div>
       

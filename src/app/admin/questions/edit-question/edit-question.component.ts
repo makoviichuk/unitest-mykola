@@ -29,9 +29,10 @@ export class EditQuestionComponent implements OnInit {
   public questionsComponent: QuestionsComponent;
 
  form: FormGroup;
- selTestId = this.data.sel_quest.test_id;
  sel_question_id = this.data.sel_quest.question_id;
- sel_question_test_name = this.data.sel_quest.test;
+ sel_question_test_id = this.data.sel_quest.test_id;
+ sel_question_test_name = this.data.sel_TestName;
+
 //  questionsByTestId: IQuestionGet[];
 
   sel_question: IQuestionGet = {
@@ -43,19 +44,21 @@ export class EditQuestionComponent implements OnInit {
     attachment: this.data.sel_quest.attachment
   };
 
- new_question: IQuestionSet = {
+ edited_question: IQuestionSet = {
     test_id: this.data.sel_quest.test_id,
     question_text: this.data.sel_quest.question_text,
     level: this.data.sel_quest.level,
     type: this.data.sel_quest.type,
     type_name: '',
-    attachment: this.data.sel_quest.attachment
+    attachment: ''
+    // attachment: this.data.sel_quest.attachment
   };
 
 
   ngOnInit() {
 
     console.log('this.sel_question OnInit = ', this.sel_question);
+    console.log('this.data.sel_TestName = ', this.data.sel_TestName);
 
     this.form = new FormGroup({
       'title': new FormControl(null, [Validators.required]),
@@ -74,24 +77,34 @@ export class EditQuestionComponent implements OnInit {
   }
 
 
+  // setQuestionId(elem: HTMLSelectElement) {
+  //   const value = elem.options[elem.selectedIndex].value;
+  //   console.log('Variants number = ', value);
+  // }
+
+   // setQuestionTestId(elem: HTMLSelectElement) {
+  //   const value = elem.options[elem.selectedIndex].value;
+  //   console.log('Variants number = ', value);
+  // }
+
   setQuestionType(elem: HTMLSelectElement) {
     const value = elem.options[elem.selectedIndex].value;
     const index = elem.options[elem.selectedIndex].index + 1; // починаємо нумерацію з одиниці
-    this.new_question.type_name = value;
-    this.new_question.type = '' + index;
+    this.edited_question.type_name = value;
+    this.edited_question.type = '' + index;
     console.log('type = ', index, ' type_name = ', value);
 
   }
 
   setQuestionLevel(elem: HTMLSelectElement) {
     const value = elem.options[elem.selectedIndex].value;
-    this.new_question.level = value;
+    this.edited_question.level = value;
     console.log('level = ', value);
   }
 
   setQuestionText(elem: HTMLSelectElement) {
     const value = elem.value;
-    this.new_question.question_text = value;
+    this.edited_question.question_text = value;
     console.log('QuestionText = ', value);
   }
 
@@ -100,11 +113,11 @@ export class EditQuestionComponent implements OnInit {
     console.log('Variants number = ', value);
   }
 
-  setResourse(elem: HTMLSelectElement) {
-    const value = elem.options[elem.selectedIndex].value;
-    this.new_question.attachment = value;
-    console.log('Attachment = ', value);
-  }
+  // setResourse(elem: HTMLSelectElement) {
+  //   const value = elem.options[elem.selectedIndex].value;
+  //   this.edited_question.attachment = value;
+  //   console.log('Attachment = ', value);
+  // }
 
 
 
@@ -113,10 +126,10 @@ export class EditQuestionComponent implements OnInit {
     const questionJSON = JSON.stringify({
       question_id: this.sel_question_id,
       test_id: this.data.sel_quest.test_id,
-      question_text: this.new_question.question_text,
-      level: this.new_question.level,
-      type: this.new_question.type,
-      attachment: this.new_question.attachment
+      question_text: this.edited_question.question_text,
+      level: this.edited_question.level,
+      type: this.edited_question.type,
+      attachment: this.edited_question.attachment
     });
 
     console.log('questionJSON = ', questionJSON);

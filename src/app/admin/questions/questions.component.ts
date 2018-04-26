@@ -104,6 +104,7 @@ export class QuestionsComponent implements OnInit {
   createQuestionsTableBySelTestIndex(selTestIndex, limit = 1000, offset = 0) {
     this.testId = this.testIdNameArr[selTestIndex - 1].test_id;
     this.testName = this.testIdNameArr[selTestIndex - 1].test_name;
+    console.log('this.testId  = ', this.testId, ' this.testName  = ', this.testName);
 
     this.service.getQuestionsNumberByTest(this.testId).subscribe(respond => {
       console.log('questionsNumberByTest = ', respond['numberOfRecords']); // returns JSON in format {"numberOfRecords": "10"}
@@ -132,18 +133,20 @@ export class QuestionsComponent implements OnInit {
   console.log('this.testId = ', this.testId, ', this.testName = ', this.testName);
 
     const matDialogRef = this.dialog.open(AddQuestionComponent, {
-      height: '600px',
-      width: '800px',
-      data: {selId: this.testId, selName: this.testName}
+      height: '700px',
+      width: '900px',
+      data: {sel_TestId: this.testId, sel_TestName: this.testName}
     });
     matDialogRef.afterClosed().subscribe( () => this.createQuestionsTableByTestId(this.testId) );
   }
 
     openModalEdit(selQuestion) {
+
+
       const matDialogRef = this.dialog.open(EditQuestionComponent, {
-        height: '600px',
-        width: '800px',
-        data: {sel_quest: selQuestion}
+        height: '700px',
+        width: '900px',
+        data: {sel_quest: selQuestion, sel_TestName: this.testName}
       });
       matDialogRef.afterClosed().subscribe( () => this.createQuestionsTableByTestId(selQuestion.test_id) );
     }
