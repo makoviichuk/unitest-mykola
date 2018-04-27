@@ -19,6 +19,7 @@ export interface IQuestionGet {
 }
 
 export interface IQuestionSet {
+
     test_id: string;
     question_text: string;
     level: string;
@@ -26,7 +27,6 @@ export interface IQuestionSet {
     type_name: string;
     attachment: string;
 }
-
 
 export interface ITestsGet {
     test_id: string;
@@ -45,6 +45,15 @@ export interface IAnswerSet {
     answer_text: string;
     attachment: string;
   }
+
+export interface IAnswerGet {
+    answer_id: string;
+    question_id: string;
+    true_answer: string;
+    answer_text: string;
+    attachment: string;
+  }
+
 
 
 

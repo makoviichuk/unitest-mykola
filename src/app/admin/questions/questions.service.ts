@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { IQuestionGet } from './questions-interface';
-import { IQuestionSet } from './questions-interface';
-import { ITestNameByID } from './questions-interface';
-import { ITestsGet } from './questions-interface';
+import { IQuestionSet, IQuestionGet, IAnswerGet} from './questions-interface';
+import { ITestsGet, ITestNameByID } from './questions-interface';
 
 
 import { IResponse } from './questions-interface';
@@ -18,7 +16,8 @@ export class QuestionsService {
   private getAllQuestionsURL = 'http://vps9615.hyperhost.name:443/api/question/getRecords/0';
   private getQuestionsByTestIdBaseURL = 'http://vps9615.hyperhost.name:443/api/question/getRecordsRangeByTest';
   private getAllTestsURL = 'http://vps9615.hyperhost.name:443/api/test/getRecords/0';
-  private addQuestionsURL = 'http://vps9615.hyperhost.name:443/api/question/insertData';
+  private addQuestionURL = 'http://vps9615.hyperhost.name:443/api/question/insertData';
+  private addAnswerURL = 'http://vps9615.hyperhost.name:443/api/answer/insertData';
   private getEntityValueURL = 'http://vps9615.hyperhost.name:443/api/EntityManager/getEntityValues';
   private editQuestionURL = 'http://vps9615.hyperhost.name:443/api/question/update';
 
@@ -54,9 +53,13 @@ return this.http.get<IQuestionGet[]>(this.getQuestionsByTestIdBaseURL + '/' + te
   //     }
 
 
-addQuestion(body): Observable<IQuestionSet|IResponse> {
-  return this.http.post<IQuestionSet|IResponse>(this.addQuestionsURL, body);
+addQuestion(body): Observable<IQuestionGet|IResponse> {
+  return this.http.post<IQuestionGet|IResponse>(this.addQuestionURL, body);
   }
+
+addAnswer(body): Observable<IAnswerGet|IResponse> {
+    return this.http.post<IAnswerGet|IResponse>(this.addAnswerURL, body);
+ }
 
 
 //  addQuestion(title: string, description: string) {
