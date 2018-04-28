@@ -48,6 +48,7 @@
                   </tr>
                 </thead>
                 <tbody>
+                  
                   <tr class="d-flex" *ngFor="let question of questions | paginate: config; let i = index">
                     <!-- <th>{{i+1}}</th> -->
                     <th class="col-sm-1" scope="row">{{(config.currentPage - 1) * config.itemsPerPage + i +1}}</th>
@@ -90,11 +91,11 @@
                           <i class="fa fa-list-ol" (click)="openModalEdit(question)" title="Відповіді"></i>
                         </span>
                         <span style="float: left; width: 33%;">
-                        <i class="fa fa-cog" (click)="openModalEdit(question)" title="Редагувати"></i>
-                      </span>
+                          <i class="fa fa-cog" (click)="openModalEdit(question)" title="Редагувати"></i>
+                        </span>
                         <span style="float: left; width: 33%;">
-                        <i class="fa fa-close" (click)="handleDelete(question.question_id)" title="Видалити"></i>
-                      </span>
+                          <i class="fa fa-close" (click)="handleDelete(question.question_id)" title="Видалити"></i>
+                        </span>
                       </div>
 
                     </td>

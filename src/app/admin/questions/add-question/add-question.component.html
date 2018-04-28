@@ -101,7 +101,7 @@
 <br>
 <br>
 
-<div *ngIf="answerNumber.length !== 0" class="form-group row">
+<div *ngIf="answersIdNumbersArray.length !== 0" class="form-group row">
       <table>
           <thead>
               <tr>
@@ -118,29 +118,29 @@
           </thead>
           
 <!--  formation of list FormControl element with type depending on answerResourse 
-      and corresponding sequence number from answerNumber array  -->
+      and corresponding id number from answersIdNumbersArray array  -->
 
-          <tr *ngFor="let number of answerNumber" >
-                <td> №{{number}}: </td>
+          <tr *ngFor="let number of answersIdNumbersArray; let answerIndex = index" >
+                <td> №{{answerIndex + 1}}:</td>
               
                 <td *ngIf="answerResourse === 'text' || correctAnswerInputType === 'num' ">
                     <label class="center-block" >
                       <input
                           type = "text"  
-                          [name] = "number"  
-                          (change)="setAnsverText(number, $event)"
+                          [name] = "answer"  
+                          (change)="setAnsverText(answerIndex, $event)"
                       >
                     </label>
                 </td>
-                <!-- #answerTextField (change)="setAnswerText(number, answerTextField)" -->
+                <!-- #answerTextField (change)="setAnswerText(answerIndex, answerTextField)" -->
                 
                 <!-- class="form-control"  correctAnswerInputType === '' -->
                 
                 <td *ngIf=" answerResourse === 'file' && correctAnswerInputType !== 'num' ">
                     <label class="center-block" >
-                      <input type="file" accept="image/*" (change)="setAnsverAttachment(number, $event)" name="number"> 
-                             <img *ngIf="newAnswersArray[number - 1].attachment !== undefined" 
-                             [src]="newAnswersArray[number - 1].attachment" 
+                      <input type="file" accept="image/*" (change)="setAnsverAttachment(answerIndex, $event)" name="answerIndex"> 
+                             <img *ngIf="newAnswersArray[answerIndex].attachment !== undefined" 
+                             [src]="newAnswersArray[answerIndex].attachment" 
                              width="50">
                     </label>
                 </td>
@@ -151,13 +151,13 @@
                     <label class="center-block" >
                         <input
                             type = "text"  
-                            [name] = "number"  
-                            (change)="setAnsverText(number, $event)"
+                            [name] = "answerIndex"  
+                            (change)="setAnsverText(answerIndex, $event)"
                         >
 
-                        <input  type="file" accept="image/*" (change)="setAnsverAttachment(number, $event)" name="number"> 
-                                <img *ngIf="newAnswersArray[number - 1].attachment !== undefined" 
-                                [src]="newAnswersArray[number - 1].attachment" 
+                        <input  type="file" accept="image/*" (change)="setAnsverAttachment(answerIndex, $event)" name="answerIndex"> 
+                                <img *ngIf="newAnswersArray[answerIndex].attachment !== undefined" 
+                                [src]="newAnswersArray[answerIndex].attachment" 
                                 width="50"
                         >
                     </label>
@@ -167,14 +167,19 @@
                 <td *ngIf="(correctAnswerInputType === 'radio' || correctAnswerInputType === 'checkbox')">
                     &nbsp;&nbsp; 
                     <input [type]="correctAnswerInputType" 
-                           name="correctAnswer" 
-                           (click)="setAnswerCorrect(number)">
+                           name="correctAnswer + answerIndex" 
+                           (click)="setAnswerCorrect(answerIndex)"
+                    >
                 </td>
 
                 <td *ngIf=" correctAnswerInputType === 'txt' ">
                   <!-- in this case all answers are correct -->
                     &nbsp;&nbsp;
-                    <input type="checkbox" name="correctAnswer" checked  disabled > 
+                    <input type="checkbox" checked  disabled > 
+                </td>
+                <td *ngIf=" correctAnswerInputType !== 'num' ">
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <i class="fa fa-close" (click)="deleteAnswer(answerIndex)" title="Видалити відповідь"></i>
                 </td>
           </tr>
       </table>

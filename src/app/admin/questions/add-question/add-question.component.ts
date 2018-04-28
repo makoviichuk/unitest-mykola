@@ -19,7 +19,7 @@ export class AddQuestionComponent implements OnInit {
  form;
  correctAnswerInputType = 'radio';
  answerResourse = 'text';
- answerNumber = [];
+ answersIdNumbersArray = [];
 //  correctAnswers = [];
  newAnswersArray = [];
 
@@ -64,7 +64,7 @@ constructor(
 
     console.log('selTestId = ', this.selTestId, ', selTestName = ', this.selTestName);
 
-    console.log('answerNumber = ', this.answerNumber);
+    console.log('answersIdNumbersArray = ', this.answersIdNumbersArray);
     console.log('newAnswersArray = ', this.newAnswersArray);
 
     this.form = new FormGroup({
@@ -77,32 +77,32 @@ constructor(
 
   addAnswer() {
     if (this.correctAnswerInputType === 'num' ) {
-         this.answerNumber = ['1', '2'];
+         this.answersIdNumbersArray = [1, 2];
          this.newAnswersArray = [{}, {}];
-         this.newAnswersArray.forEach(element => {  element.true_answer = '1'; });
+         this.newAnswersArray.forEach(element => {  element.true_answer = '1'; element.attachment = ''; });
 
          this.questionForm.addControl(  (this.newAnswersArray.length).toString() ,
                                           new FormControl('', [Validators.required] )
                                      );
     } else {
 
-      this.questionForm.addControl(  (this.answerNumber.length + 1).toString() ,
+      this.questionForm.addControl(  (this.newAnswersArray.length + 1).toString() ,
                                       new FormControl('', [Validators.required] ) );
-                  this.answerNumber.push( (this.answerNumber.length + 1).toString());
-                  this.newAnswersArray.push({});
+                  // this.answersIdNumbersArray.push( this.answersIdNumbersArray.length + 1);
+                  const lastIndex = this.answersIdNumbersArray.length - 1;
+                  this.answersIdNumbersArray.push(
+                    lastIndex === -1 ? 1 : this.answersIdNumbersArray[lastIndex] + 1
+                  );
+                  this.newAnswersArray.push({answer_text: '', attachment: ''});
 
-                  if (this.correctAnswerInputType === 'txt' ) { // set added answer correct
-                    this.newAnswersArray[this.newAnswersArray.length - 1].true_answer = '1'; }
-
-                  if (this.answerResourse === 'text' ) { // set added answer correct
-                    this.newAnswersArray[this.newAnswersArray.length - 1].attachment = ''; }
-
-                  if (this.answerResourse === 'file' ) { // set added answer correct
-                    this.newAnswersArray[this.newAnswersArray.length - 1].answer_text = ''; }
-
+                  if (this.correctAnswerInputType === 'txt' ) {
+                    this.newAnswersArray[this.newAnswersArray.length - 1].true_answer = '1';
+                  } else {
+                    this.newAnswersArray[this.newAnswersArray.length - 1].true_answer = '0';
+                  }
     }
-                console.log('this.answerNumber = ', this.answerNumber);
-                console.log('this.newAnswersArray = ', this.newAnswersArray);
+                // console.log('this.answersIdNumbersArray = ', this.answersIdNumbersArray);
+                // console.log('this.newAnswersArray = ', this.newAnswersArray);
   }
 
 
@@ -110,11 +110,19 @@ constructor(
     console.log('onAnswerTypeSelect = ', event.target.value);
     if (event.target.value === '1') {
        this.correctAnswerInputType = 'radio';
-       this.newAnswersArray.forEach(element => { element.true_answer = '0'; }); // clears all correct answers
+       this.newAnswersArray.forEach(element => {
+            this.deleteAnswer(element);
+            this.addAnswer(); // set all answers false
+            // element.true_answer = '0'; - doesn't uncheck FormControl with max number checked previously
+       });
        }
     if (event.target.value === '2') {
         this.correctAnswerInputType = 'checkbox';
-        this.newAnswersArray.forEach(element => { element.true_answer = '0'; }); // clears all correct answers
+        this.newAnswersArray.forEach(element => {
+          this.deleteAnswer(element);
+          this.addAnswer(); // set all answers false
+          // element.true_answer = '0'; - doesn't uncheck FormControl with max number checked previously
+        });
        }
     if (event.target.value === '3') {
         this.correctAnswerInputType = 'txt';
@@ -122,7 +130,7 @@ constructor(
       }
     if (event.target.value === '4') {
         this.correctAnswerInputType = 'num';
-        this.addAnswer(); // sets two input fields for NUMERICAL type
+        this.addAnswer(); // sets only two input fields for NUMERICAL answers type
     }
     console.log('correctAnswerInputType = ', this.correctAnswerInputType);
     console.log(' this.newAnswersArray = ',  this.newAnswersArray);
@@ -173,8 +181,7 @@ constructor(
     fileReader.readAsDataURL(img);
   }
 
-  setAnsverAttachment(number, event) {
-    const checkedIndex = Number(number) - 1;
+  setAnsverAttachment(checkedIndex, event) {
     const fileReader = new FileReader();
     const img = event.target.files[0];
     fileReader.onload = () => this.newAnswersArray[checkedIndex].attachment = fileReader.result;
@@ -182,30 +189,31 @@ constructor(
     console.log('this.newAnswersArray = ', this.newAnswersArray);
   }
 
-  setAnsverText(number, event) {
-    const checkedIndex = Number(number) - 1;
+  setAnsverText(checkedIndex, event) {
     const value = event.target.value;
     this.newAnswersArray[checkedIndex].answer_text = value;
     console.log('this.newAnswersArray = ', this.newAnswersArray);
   }
 
 
-  setAnswerCorrect(number, event) {
-    // console.log('number = ', number, ',  event.target.value = ', event.target.value);
-    const checkedIndex = Number(number) - 1;
-
-    if (this.correctAnswerInputType === 'radio') {
-      for (let index = 0; index < this.newAnswersArray.length; index++) {
-        this.newAnswersArray[index].true_answer = (index === checkedIndex) ? '1' : '0';
+  setAnswerCorrect(checkedIndex, event) {
+      if (this.correctAnswerInputType === 'radio') {
+        for (let index = 0; index < this.newAnswersArray.length; index++) {
+          this.newAnswersArray[index].true_answer = (index === checkedIndex) ? '1' : '0';
+        }
       }
-    }
+      if (this.correctAnswerInputType === 'checkbox') {
+        this.newAnswersArray[checkedIndex].true_answer =
+        ( this.newAnswersArray[checkedIndex].true_answer === '0') ? '1' : '0';
+      }
+      console.log(`this.newAnswersArray = `, this.newAnswersArray);
+  }
 
-    if (this.correctAnswerInputType === 'checkbox') {
-      this.newAnswersArray[checkedIndex].true_answer =
-      ( this.newAnswersArray[checkedIndex].true_answer === '0') ? '1' : '0';
-    }
-
-    console.log(`this.newAnswersArray = `, this.newAnswersArray);
+  deleteAnswer(checkedIndex) {
+    this.newAnswersArray.splice(checkedIndex, 1);
+    this.answersIdNumbersArray.splice(checkedIndex, 1);
+    // console.log(`this.newAnswersArray = `, this.newAnswersArray);
+    // console.log(`this.answersIdNumbersArray = `, this.answersIdNumbersArray);
   }
 
 
