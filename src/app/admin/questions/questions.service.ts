@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { IQuestionSet, IQuestionGet, IAnswerGet} from './questions-interface';
-import { ITestsGet, ITestNameByID } from './questions-interface';
+import { IQuestionSet, IQuestionGet, IAnswerSet, IAnswersGet} from './questions-interface';
+import { ISubjectsGet, ITestsGet, ITestNameByID } from './questions-interface';
 
 
 import { IResponse } from './questions-interface';
@@ -16,10 +16,16 @@ export class QuestionsService {
   private getAllQuestionsURL = 'http://vps9615.hyperhost.name:443/api/question/getRecords/0';
   private getQuestionsByTestIdBaseURL = 'http://vps9615.hyperhost.name:443/api/question/getRecordsRangeByTest';
   private getAllTestsURL = 'http://vps9615.hyperhost.name:443/api/test/getRecords/0';
+  private getAllSubjectsURL = 'http://vps9615.hyperhost.name:443/api/subject/getRecords/0';
   private addQuestionURL = 'http://vps9615.hyperhost.name:443/api/question/insertData';
   private addAnswerURL = 'http://vps9615.hyperhost.name:443/api/answer/insertData';
+  private getAnswersByQuestionIdURL = 'http://vps9615.hyperhost.name:443/api/answer/getAnswersByQuestion';
   private getEntityValueURL = 'http://vps9615.hyperhost.name:443/api/EntityManager/getEntityValues';
   private editQuestionURL = 'http://vps9615.hyperhost.name:443/api/question/update';
+  private editAnswerURL = 'http://vps9615.hyperhost.name:443/api/answer/update';
+  private deleteQuestionURL = 'http://vps9615.hyperhost.name:443/api/question/del/';
+  private deleteAnswerURL = 'http://vps9615.hyperhost.name:443/api/answer/del/';
+
 
 
 constructor(private http: HttpClient) { }
@@ -28,7 +34,9 @@ constructor(private http: HttpClient) { }
 getAllQuestions(): Observable<IQuestionGet[]> {
   return this.http.get<IQuestionGet[]>(this.getAllQuestionsURL);
 }
-
+getAllSubjects(): Observable<ISubjectsGet[]> {
+  return this.http.get<ISubjectsGet[]>(this.getAllSubjectsURL);
+}
 getAllTests(): Observable<ITestsGet[]> {
   return this.http.get<ITestsGet[]>(this.getAllTestsURL);
 }
@@ -48,7 +56,13 @@ getQuestionsByTestId(test_id: string, limit: string, offset: number): Observable
 return this.http.get<IQuestionGet[]>(this.getQuestionsByTestIdBaseURL + '/' + test_id + '/' + limit + '/' + offset);
   }
 
-  // getQuestionsByTestId(test_id: string, limit: number, offset: number): Observable<IQuestionGet[]> {
+
+  getAnswersByQuestionId(question_id: string): Observable<IAnswersGet[]> {
+    return this.http.get<IAnswersGet[]>(this.getAnswersByQuestionIdURL + '/' + question_id);
+      }
+
+
+ // getQuestionsByTestId(test_id: string, limit: number, offset: number): Observable<IQuestionGet[]> {
   //   return this.http.get<IQuestionGet[]>(this.getQuestionsByTestIdBaseURL + '/' + test_id + '/' + limit + '/' + offset);
   //     }
 
@@ -57,8 +71,8 @@ addQuestion(body): Observable<IQuestionGet|IResponse> {
   return this.http.post<IQuestionGet|IResponse>(this.addQuestionURL, body);
   }
 
-addAnswer(body): Observable<IAnswerGet|IResponse> {
-    return this.http.post<IAnswerGet|IResponse>(this.addAnswerURL, body);
+addAnswer(body): Observable<IAnswerSet|IResponse> {
+    return this.http.post<IAnswerSet|IResponse>(this.addAnswerURL, body);
  }
 
 
@@ -76,18 +90,21 @@ addAnswer(body): Observable<IAnswerGet|IResponse> {
     return this.http.post<IQuestionGet|IResponse>(this.editQuestionURL + '/' + id, body);
     }
 
+  editAnswer(id, body): Observable<IAnswersGet|IResponse> {
+    return this.http.post<IAnswersGet|IResponse>(this.editAnswerURL + '/' + id, body);
+    }
+
   getEntityValue(body): Observable<ITestNameByID[]> {
     return this.http.post<ITestNameByID[]>(this.getEntityValueURL, body);
   }
 
-// Видалення завдання
-
   deleteQuestion(id): Observable<IResponse> {
-    //  alert('id видаленого завданя: ' + id);
+    // return this.http.delete<IResponse>(`deleteQuestionURL${id}`);
+   return this.http.delete<IResponse>(this.deleteQuestionURL + id);
+  }
 
-    return this.http.delete<IResponse>(`http://vps9615.hyperhost.name:443/api/question/del/${id}`);
-//    return this.http.delete<IResponse>('http://vps9615.hyperhost.name:443/api/question/del/'+id);
-
+  deleteAnswer(id): Observable<IResponse> {
+   return this.http.delete<IResponse>(this.deleteAnswerURL + id);
   }
 
 }

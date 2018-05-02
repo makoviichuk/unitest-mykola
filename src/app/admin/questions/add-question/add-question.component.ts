@@ -2,7 +2,7 @@ import {Component, Inject, OnInit, Input, Output, EventEmitter, ViewEncapsulatio
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {QuestionsService} from '../questions.service';
 // import {QuestionsComponent} from '../questions.component';
-import {IQuestions, IQuestionSet, IAnswerSet, IAnswerGet, IResponse, IQuestionGet} from '../questions-interface';
+import {IQuestions, IQuestionSet, IAnswerSet, IAnswersGet, IResponse, IQuestionGet} from '../questions-interface';
 import {ActivatedRoute} from '@angular/router';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 
@@ -102,7 +102,7 @@ constructor(
                   }
     }
                 // console.log('this.answersIdNumbersArray = ', this.answersIdNumbersArray);
-                // console.log('this.newAnswersArray = ', this.newAnswersArray);
+                console.log('this.newAnswersArray = ', this.newAnswersArray);
   }
 
 
@@ -111,7 +111,7 @@ constructor(
     if (event.target.value === '1') {
        this.correctAnswerInputType = 'radio';
        this.newAnswersArray.forEach(element => {
-            this.deleteAnswer(element);
+            this.deleteAnswerFromArray(element);
             this.addAnswer(); // set all answers false
             // element.true_answer = '0'; - doesn't uncheck FormControl with max number checked previously
        });
@@ -119,7 +119,7 @@ constructor(
     if (event.target.value === '2') {
         this.correctAnswerInputType = 'checkbox';
         this.newAnswersArray.forEach(element => {
-          this.deleteAnswer(element);
+          this.deleteAnswerFromArray(element);
           this.addAnswer(); // set all answers false
           // element.true_answer = '0'; - doesn't uncheck FormControl with max number checked previously
         });
@@ -209,15 +209,15 @@ constructor(
       console.log(`this.newAnswersArray = `, this.newAnswersArray);
   }
 
-  deleteAnswer(checkedIndex) {
+  deleteAnswerFromArray(checkedIndex) {
     this.newAnswersArray.splice(checkedIndex, 1);
     this.answersIdNumbersArray.splice(checkedIndex, 1);
-    // console.log(`this.newAnswersArray = `, this.newAnswersArray);
+    console.log(`this.newAnswersArray = `, this.newAnswersArray);
     // console.log(`this.answersIdNumbersArray = `, this.answersIdNumbersArray);
   }
 
 
-addQuestionSubmit() {
+addedQuestionSubmit() {
   const questionJSON = JSON.stringify({
     test_id: this.selTestId,
     question_text: this.new_question.question_text,
@@ -235,7 +235,7 @@ addQuestionSubmit() {
               answer.question_id = dataNewQuestions[0].question_id;
               console.log('new answer = ', answer);
               this.questionService.addAnswer(answer).subscribe(
-                   (dataNewAnswers: IAnswerGet) =>
+                   (dataNewAnswers: IAnswersGet) =>
                     console.log('Respond: newAnswers_id = ', dataNewAnswers)
               );
               });

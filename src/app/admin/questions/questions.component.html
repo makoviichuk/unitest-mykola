@@ -2,30 +2,60 @@
   <div class="container-fluid">
     <header> 
             
-            <h1 class="h3 display ">{{ title_component }} 
-                <span>
-                  <select 
-                    class="col-12" 
-                    id="testSelect" 
-                    #testFild
-                    (change)="createQuestionsTableBySelTestIndex(testFild.selectedIndex)"
-                    >
-                    <option disabled>Виберіть тест</option>
-                    <option *ngFor="let testIdName of testIdNameArr"  
-                    [selected]="testIdName.test_name === this.testName"
-                    >
-                      {{testIdName.test_name}}
+            <h1 class="h3 display ">
+              Завдання </h1> 
 
-                    </option>
-
-                  </select>
-                </span>
-  
-            </h1>
+              <div class="form-group col-4">
+                  <label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;з предмету:
+                      <select 
+                      class="form-control col-md-12" 
+                       id="subjectSelect" 
+                       #subjectFild
+                       (change)="createTestListBySelSubject(subjectFild.selectedIndex)"
+                       >
+                       <option value="selectSubject" disabled>Виберіть предмет</option>
+                       <option *ngFor="let subjectIdName of subjectIdNamesArr"  
+                       [selected]="selectSubject"
+                       >
+                         {{subjectIdName.subject_name}}
+                       </option>
+                     </select>
+                  </label>
+              </div>
+              <!-- [selected]="subjectIdNamesArr.subjectName === this.subjectName" -->
+              
+              
+              <div class="form-group col-3">
+                  <label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;для тесту:
+                      <select 
+                      class="form-control col-md-12" 
+                        id="testSelect" 
+                        #testFild
+                        (change)="createQuestionsTableBySelTestIndex(testFild.selectedIndex)"
+                        >
+                        <option value="selectTest" >Виберіть тест</option>
+                        <option *ngFor="let test of testListBySelSubject"  
+                        [selected]="selectTest" 
+                        >
+                          {{test.test_name}}
+                        </option>
+                      </select>
+                  </label>
+              </div>
+              <!-- [selected]="test.test_name === this.testName"  "selectTest" -->
+              
+                
+          <div class="form-group col-2">
+            <input class="form-control col-md-12" type="text" placeholder="пошук">
+          </div>
             
-            <button mat-raised-button class="btn btn-primary" 
-            (click)="openModalAdd(testFild.selectedIndex, testFild.options[testFild.selectedIndex].value)"
-            >Додати завдання</button>
+          <div class="form-group">     
+            <input type="button" class="btn btn-success" 
+              value="Додати завдання" id="addQuestion" 
+              (click)="openModalAdd(testFild.selectedIndex, testFild.options[testFild.selectedIndex].value)"
+            >
+          </div>
+        
 
     </header> 
  
@@ -50,7 +80,6 @@
                 <tbody>
                   
                   <tr class="d-flex" *ngFor="let question of questions | paginate: config; let i = index">
-                    <!-- <th>{{i+1}}</th> -->
                     <th class="col-sm-1" scope="row">{{(config.currentPage - 1) * config.itemsPerPage + i +1}}</th>
                     
                     <td class="col-sm-5">{{question.question_text}} </td>

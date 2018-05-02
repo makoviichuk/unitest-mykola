@@ -28,6 +28,12 @@ export interface IQuestionSet {
     attachment: string;
 }
 
+export interface ISubjectsGet {
+    subject_id: string;
+    subject_name: string;
+    subject_description: string;
+}
+
 export interface ITestsGet {
     test_id: string;
     test_name: string;
@@ -46,7 +52,7 @@ export interface IAnswerSet {
     attachment: string;
   }
 
-export interface IAnswerGet {
+export interface IAnswersGet {
     answer_id: string;
     question_id: string;
     true_answer: string;

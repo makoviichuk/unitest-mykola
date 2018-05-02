@@ -5,10 +5,27 @@
   <div class="card-body">
     <!-- <p></p> -->
  
-  <form class="form-group" [formGroup]="form" (submit)="addQuestionSubmit()">
+  <form class="form-group" [formGroup]="form" (submit)="addedQuestionSubmit()">
 
-    <div class="form-row">
-           
+              <div class="form-row">
+                  <div class="form-group col-2"> 
+                      <label>Виберіть рівень</label>
+                      <select 
+                        size="5"
+                        class="form-control col-10  " 
+                        id="levelSelect" 
+                        name="level" 
+                        #levelField
+                        (change)="setQuestionLevel(levelField)">
+                          <option 
+                            *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]" 
+                          >
+                              {{i}}
+                          </option>
+                      </select>
+              </div>
+                  <!-- [selected]="i == sel_question.level" -->
+
               <div class="form-group col-6"> 
                   <label>Текст завдання</label>
                   <textarea 
@@ -24,32 +41,23 @@
                   <label>Вкладення
                     <input type="file" accept="image/*" (change)="setQuestionAttachment($event)">
                   </label>
-                  <img *ngIf="new_question.attachment !== undefined" 
+                  <img *ngIf="new_question.attachment !== '' " 
                        [src]="new_question.attachment" 
-                       width="100">
+                       width="100"
+                  >
+                  <label *ngIf="new_question.attachment !== '' ">
+                      <input type="button"  
+                      value="Видалити вкладення"
+                      (click)="new_question.attachment = '' "   
+                      >
+                  </label>
                         <!-- <ng-template #elseBlok>  
                           <p>elseBlok</p>  
                         </ng-template>  -->
-            <!-- <img *ngIf="question.attachment !== undefined" [src]="question.attachment" width="50"> -->
               </div>
 
-              <div class="form-group col-2"> 
-                  <label>Рівень</label>
-                  <select 
-                    class="form-control col-10  " 
-                    id="levelSelect" 
-                    name="level" 
-                    #levelField
-                    (change)="setQuestionLevel(levelField)">
-                      <option 
-                        *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]" 
-                      >
-                          {{i}}
-                      </option>
-                  </select>
-                </div>
-
-                        <!-- [selected]="i == sel_question.level" -->
+              
+                        
       </div> 
      
        <br> 
@@ -90,11 +98,13 @@
               </select>
             </div>
             
-           <input
-                  (click)="addAnswer()"  
-                  type="button"  
-                  value="Додати варіант відповіді" 
-            >
+           <label>
+              <input 
+                (click)="addAnswer()"  
+                type="button"  
+                value="Додати варіант відповіді" 
+               >
+           </label>
                          
       </div>
 
@@ -120,17 +130,21 @@
 <!--  formation of list FormControl element with type depending on answerResourse 
       and corresponding id number from answersIdNumbersArray array  -->
 
-          <tr *ngFor="let number of answersIdNumbersArray; let answerIndex = index" >
+          <tr *ngFor="let idNumber of answersIdNumbersArray; let answerIndex = index" >
                 <td> №{{answerIndex + 1}}:</td>
               
                 <td *ngIf="answerResourse === 'text' || correctAnswerInputType === 'num' ">
                     <label class="center-block" >
                       <input
                           type = "text"  
-                          [name] = "answer"  
+                          [name] = "answerIndex"  
                           (change)="setAnsverText(answerIndex, $event)"
+                          value="{{newAnswersArray[answerIndex].answer_text}}"
                       >
                     </label>
+                    <span *ngIf="(correctAnswerInputType === 'num' && answerIndex === 0)">&nbsp;&nbsp;Мінімальне значення</span>
+                    <span *ngIf="(correctAnswerInputType === 'num' && answerIndex === 1)">&nbsp;&nbsp;Максимальне значення</span>
+                    
                 </td>
                 <!-- #answerTextField (change)="setAnswerText(answerIndex, answerTextField)" -->
                 
@@ -153,6 +167,7 @@
                             type = "text"  
                             [name] = "answerIndex"  
                             (change)="setAnsverText(answerIndex, $event)"
+                            value="{{newAnswersArray[answerIndex].answer_text}}"
                         >
 
                         <input  type="file" accept="image/*" (change)="setAnsverAttachment(answerIndex, $event)" name="answerIndex"> 
@@ -177,6 +192,8 @@
                     &nbsp;&nbsp;
                     <input type="checkbox" checked  disabled > 
                 </td>
+
+                
                 <td *ngIf=" correctAnswerInputType !== 'num' ">
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     <i class="fa fa-close" (click)="deleteAnswer(answerIndex)" title="Видалити відповідь"></i>

@@ -37,21 +37,38 @@ export class QuestionsComponent implements OnInit {
       selectedTestName: string;
       questions: IQuestionGet[] = [];
       question: IQuestions;
-      testIdNameArr = [];
+      subjectIdNamesArr = [];
+      allTestIdNameArr = [];
+      testListBySelSubject = [];
       title_component = 'Завдання для тесту: ';
       form: FormGroup;
 
-      testId: string;
-      testName: string;
-    // these params passed from  test.component, there is need to prescribe the method
-    //
+    // these params passed from  subject.component
+      subjectId: string;
+      subjectName: string;
+    // firstly in test.component then in question.component
+
+    // there is need to prescribe the method
     // openQuestions(id: string, name: string) {
     //     this.router.navigate(['/admin/questions'], {
     //       queryParams: { testId: id, testName: name }
     //     });
     //    }
     // }
-    // and on icon click event should be hanged method (click)="openQuestions(t.test_id, t.test_name)
+    // and on tests icon click event should be hanged method (click)="openQuestions(t.test_id, t.test_name)
+
+
+    // these params passed from  test.component
+      testId: string;
+      testName: string;
+    // there is need to prescribe the method
+    // openQuestions(id: string, name: string) {
+    //     this.router.navigate(['/admin/questions'], {
+    //       queryParams: { testId: id, testName: name }
+    //     });
+    //    }
+    // }
+    // and on questions icon click event should be hanged method (click)="openQuestions(t.test_id, t.test_name)
 
   constructor(
     private service: QuestionsService,
@@ -70,6 +87,7 @@ export class QuestionsComponent implements OnInit {
 
   ngOnInit() {
     console.log(' this.testId = ',  this.testId, ', this.testName = ', this.testName);
+    this.createSubjectsIdNamesArray();
     this.createTestsIdNamesArray();
 
     if (this.testId) {
@@ -93,7 +111,7 @@ export class QuestionsComponent implements OnInit {
           this.questions = [];
           alert(' Вибраний тест ще не має завдань. Додайте завдання');
         }
-        console.log('createQuestionsTableByTestId = ', this.questions);
+        // console.log('createQuestionsTableByTestId = ', this.questions);
       });
 
     });
@@ -101,9 +119,11 @@ export class QuestionsComponent implements OnInit {
 
   }
 
+
+
   createQuestionsTableBySelTestIndex(selTestIndex, limit = 1000, offset = 0) {
-    this.testId = this.testIdNameArr[selTestIndex - 1].test_id;
-    this.testName = this.testIdNameArr[selTestIndex - 1].test_name;
+    this.testId = this.testListBySelSubject[selTestIndex - 1].test_id;
+    this.testName = this.testListBySelSubject[selTestIndex - 1].test_name;
     console.log('this.testId  = ', this.testId, ' this.testName  = ', this.testName);
 
     this.service.getQuestionsNumberByTest(this.testId).subscribe(respond => {
@@ -128,12 +148,12 @@ export class QuestionsComponent implements OnInit {
 
   openModalAdd(selTestIndex, selTestName) {
     // - 1  becouse dropped list has additional filds 'виберіть тест'
-    this.testId = this.testIdNameArr[selTestIndex - 1].test_id;
+    this.testId = this.testListBySelSubject[selTestIndex - 1].test_id;
     this.testName = selTestName;
   console.log('this.testId = ', this.testId, ', this.testName = ', this.testName);
 
     const matDialogRef = this.dialog.open(AddQuestionComponent, {
-      height: '700px',
+      height: '600px',
       width: '900px',
       data: {sel_TestId: this.testId, sel_TestName: this.testName}
     });
@@ -144,27 +164,57 @@ export class QuestionsComponent implements OnInit {
 
 
       const matDialogRef = this.dialog.open(EditQuestionComponent, {
-        height: '700px',
+        height: '600px',
         width: '900px',
         data: {sel_quest: selQuestion, sel_TestName: this.testName}
       });
       matDialogRef.afterClosed().subscribe( () => this.createQuestionsTableByTestId(selQuestion.test_id) );
     }
 
+  createSubjectsIdNamesArray() {
+    this.service.getAllSubjects().subscribe(data => {
+      this.subjectIdNamesArr = data.map(val => {
+        return {
+          subject_id: val.subject_id,
+          subject_name: val.subject_name
+        };
+      });
+      // console.log('createTestsIdNamesArray.allTestIdNameArr = ', this.allTestIdNameArr);
+   });
+  }
+
+  createTestListBySelSubject(selSubjectIndex) {
+    // console.log(`this.subjectIdNamesArr[${selSubjectIndex - 1}].subject_name = `,
+    //  this.subjectIdNamesArr[selSubjectIndex - 1].subject_name);
+    this.testListBySelSubject = [];
+    this.questions = [];
+    this.allTestIdNameArr.forEach(element => {
+      if (element.subject_id === this.subjectIdNamesArr[selSubjectIndex - 1].subject_id) {
+        this.testListBySelSubject.push(element);
+      }
+    } );
+    if (this.testListBySelSubject.length === 0) {
+      // this.testListBySelSubject[0].test_name = 'Даний предмет немає тестів';
+      this.testListBySelSubject.push({test_name: 'Предмет немає тестів'});
+
+    }
+    console.log('this.testListBySelSubject = ', this.testListBySelSubject);
+  }
 
   createTestsIdNamesArray() {
      this.service.getAllTests().subscribe(data => {
-        this.testIdNameArr = data.map(val => {
+        this.allTestIdNameArr = data.map(val => {
           return {
             test_id: val.test_id,
-            test_name: val.test_name
+            test_name: val.test_name,
+            subject_id: val.subject_id
           };
         });
-        console.log('createTestsIdNamesArray.testIdNameArr = ', this.testIdNameArr);
+        // console.log('createTestsIdNamesArray.allTestIdNameArr = ', this.allTestIdNameArr);
      });
   }
 
-
+// запрограмувати видалення спочатку всіх відповідей
   handleDelete(question_id): void {
     const dialogRef = this.dialog.open(DeleteConfirmComponent, {
       width: '400px',
@@ -184,7 +234,7 @@ export class QuestionsComponent implements OnInit {
             });
             this.createQuestionsTableByTestId(this.testId);
           }},
-          () => {
+          () => { // ця функція показує вікно коли deleteQuestion(question_id).subscribe повертає помилку
             this.dialog.open(ResponseMessageComponent, {
               width: '400px',
               data: {
